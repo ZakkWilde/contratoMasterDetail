@@ -1,0 +1,33 @@
+<mvc:View controllerName="zfiorictr1.controller.HomePage" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m">
+    <Page id="page" title="{i18n>MasterPage}" showHeader="true" showFooter="true">
+        <content>
+            <List id="HeaderList" 
+                    items="{ path: '/FornecedorSet', sorter: { path: 'Lifnr' } }" 
+                    updateFinished="onUpdateFinished"
+                    selectionChange="onSelectionChange" 
+                    growing="true" 
+                    growingScrollToLoad="true" 
+                    growingThreshold="20" 
+                    includeItemInSelection="true">
+                <headerToolbar>
+                    <Toolbar id="HeaderTolbar" design="Solid">
+                        <content>
+                            <SearchField id="HeaderSearch" placeholder="Search" liveChange="onSearch" showSearchButton="true" visible="true" width="100%" />
+                        </content>
+                    </Toolbar>
+                </headerToolbar>
+                <infoToolbar>
+                    <OverflowToolbar visible="false" id="idInfoToolbar">
+                        <Label id="idFilterLabel" />
+                    </OverflowToolbar>
+                </infoToolbar>
+                <items>
+                    <StandardListItem id="masterItem" title="{Name1}" description="{Stceg}" info="{Lifnr}" type="Navigation" press=".onListItemPressed" />
+                </items>
+            </List>
+        </content>
+        <footer>
+            <OverflowToolbar id="MasterFooter" />
+        </footer>
+    </Page>
+</mvc:View>

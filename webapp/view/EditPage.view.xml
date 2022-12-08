@@ -1,0 +1,89 @@
+<mvc:View 
+    xmlns:form="sap.ui.layout.form" 
+    controllerName="zfiorictr1.controller.EditPage" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    displayBlock="true" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core" 
+    xmlns="sap.m">
+    <Page id="editPage" title="{i18n>EditPage}" showHeader="true" showFooter="true" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <ObjectHeader id="HeaderEdit"  intro="{NomeForne}" title="{ContratoFactoring}" icon="sap-icon://business-card" number="{Fornecedor}" numberState="None" titleActive="false" backgroundDesign="Translucent" condensed="false" visible="true" />
+            <VBox class="sapUiSmallMargin">
+                <form:SimpleForm
+                    id="formEdit"
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    title="Criação de Contrato"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                >
+                    <f:content>
+                        <Label text="{i18n>ini}" />
+                        <DatePicker id="dataInicio" placeholder="Data de Início" valueFormat="dd-MM-yyyy" dateValue="{DataInicio}" />
+                        <Text />
+                        <Label text="{i18n>Fim}" />
+                        <DatePicker id="dataFim" placeholder="Data de Fim" valueFormat="dd-MM-yyyy" dateValue="{DataFim}"/>
+                        <Text />
+                        <Label text="{i18n>ff}" />
+                        <Input id="supplierInput" value="{FornecedorDivergente}" showSuggestion="true" showValueHelp="true" valueHelpRequest=".onValueHelpRequest" suggestionItems="{/FornecedorSet}" editable="{Edit}">
+                            <suggestionItems>
+                                <core:Item text="{Lifnr}" />
+                            </suggestionItems>
+                        </Input>
+                        <Text id="supText" text="{NomeForneD}" />
+                    </f:content>
+                </form:SimpleForm>
+            </VBox>
+            <UploadCollection
+                id="UploadCollection"
+                maximumFilenameLength="55"
+                maximumFileSize="10"
+                multiple="true"
+                sameFilenameAllowed="true"
+                instantUpload="false"
+                noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload"
+                change="onChange"
+                uploadComplete="onUploadComplete"
+                beforeUploadStarts="onBeforeUploadStarts"
+                uploadEnabled="true"
+                fileDeleted="onFileDeleted"
+                filenameLengthExceed="onFilenameLengthExceed"
+                fileSizeExceed="onFileSizeExceed"
+                items="{ContratoAnexo}"
+                uploadUrl="/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/AnexoSet"
+                >
+                <items>
+                    <UploadCollectionItem 
+                        id="upCollection" 
+                        visibleEdit="false" 
+                        documentId="{ContratoFactoring}" 
+                        fileName="{Filename}" 
+                        mimeType="{Filetype}"
+                        url="/sap/opu/odata/sap/ZFILE_EX_SRV/ContratoSet('{ContratoFactoring}')/ContratoAnexo"
+                        enableEdit="false" 
+                        enableDelete="false" 
+                        visibleDelete="false"
+                    />
+                </items>
+            </UploadCollection>
+        </content>
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer />
+                <Button id="save" icon="sap-icon://create" text="Gravar" type="Accept" press="onSave" />
+                <Button id="canc" icon="sap-icon://sys-cancel" text="Cancelar" type="Reject" press="onCanc" />
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

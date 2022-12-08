@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "2.5"
+metadata:
+  name: zfiorictr1
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          destination: ANA_Aeroportos_FrontEnd
+          url: http://anadevfront:2500
+        app:
+          name: ZFIORI_CTR_DV1
+          description: Contrato Fornecedor Divergente
+          package: ZFIORI_0038F
+          transport: MBDK901423

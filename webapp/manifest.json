@@ -1,0 +1,177 @@
+{
+  "_version": "1.17.0",
+  "sap.app": {
+    "id": "zfiorictr1",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.8.1",
+      "toolsId": "d4c55631-3a49-4179-8e05-52060b22fe78"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.71.51",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.generic.template": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zfiorictr1.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "useBatch" : true
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "zfiorictr1.view",
+        "controlAggregation": "pages",
+        "controlId": "app"
+      },
+      "routes": [
+        {
+          "name": "RouteHomePage",
+          "pattern": "RouteHomePage:?query:",
+          "target": [
+            "TargetDetailPage",
+            "TargetHomePage"
+          ]
+        },
+        {
+          "name": "RouteDetailPage",
+          "pattern": "RouteDetailPage/{objectId}",
+          "target": [
+            "TargetHomePage",
+            "TargetDetailPage"
+          ]
+        },
+        {
+          "name": "RouteCreatePage",
+          "pattern": "RouteCreatePage/{objectId}",
+          "target": [
+            "TargetDetailPage",
+            "TargetCreatePage"
+          ]
+        },
+        {
+          "name": "RouteEditPage",
+          "pattern": "RouteEditPage/{objectId}",
+          "target":[
+            "TargetDetailPage",
+            "TargetEditPage"
+          ]
+        },
+        {
+          "name": "Default",
+          "pattern": "",
+          "target": [
+            "TargetHomePage",
+            "TargetDetailPage"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetHomePage": {
+          "viewType": "XML",
+          "transition": "slide",
+          "viewId": "HomePage",
+          "viewName": "HomePage",
+          "controlAggregation": "masterPages"
+        },
+        "TargetDetailPage": {
+          "viewType": "XML",
+          "viewName": "DetailPage",
+          "viewId": "DetailPage",
+          "controlAggregation": "detailPages"
+        },
+        "TargetCreatePage": {
+          "viewType": "XML",
+          "viewId": "CreatePage",
+          "viewName": "CreatePage",
+          "controlAggregation": "detailPages"
+        },
+        "TargetEditPage" : {
+          "viewType": "XML",
+          "viewId": "EditPage",
+          "viewName": "EditPage",
+          "controlAggregation": "detailPages"
+        },
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				}
+      }
+    },
+    "rootView": {
+      "viewName": "zfiorictr1.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  }
+}

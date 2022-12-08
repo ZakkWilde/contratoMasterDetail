@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZFIORI_CONTRATO_FOR_DIV_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="Contrato" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ContratoFactoring"/>
+                </Key>
+                <Property Name="ContratoFactoring" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false"/>
+                <Property Name="Fornecedor" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor"/>
+                <Property Name="DataInicio" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Start date"/>
+                <Property Name="DataFim" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="End date"/>
+                <Property Name="FornecedorDivergente" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor"/>
+                <NavigationProperty Name="ContratoAnexo" Relationship="ZFIORI_CONTRATO_FOR_DIV_SRV.ContratoAnexo" FromRole="FromRole_ContratoAnexo" ToRole="ToRole_ContratoAnexo"/>
+            </EntityType>
+            <EntityType Name="Anexo" m:HasStream="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ContratoFactoring"/>
+                </Key>
+                <Property Name="ContratoFactoring" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false"/>
+                <Property Name="Filename" Type="Edm.String" Nullable="false" m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="false" sap:unicode="false"/>
+                <Property Name="Attach" Type="Edm.Binary" Nullable="false" sap:unicode="false"/>
+                <Property Name="Filetype" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false"/>
+                <Property Name="Creaton" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false"/>
+                <Property Name="Creatime" Type="Edm.Time" Nullable="false" Precision="0" sap:unicode="false"/>
+                <Property Name="Message" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false"/>
+            </EntityType>
+            <EntityType Name="Fornecedor" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Lifnr"/>
+                </Key>
+                <Property Name="Lifnr" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Name1" Type="Edm.String" Nullable="false" MaxLength="35" sap:unicode="false" sap:label="Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Stceg" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="VAT Reg. No." sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <Association Name="ContratoAnexo" sap:content-version="1">
+                <End Type="ZFIORI_CONTRATO_FOR_DIV_SRV.Contrato" Multiplicity="1" Role="FromRole_ContratoAnexo"/>
+                <End Type="ZFIORI_CONTRATO_FOR_DIV_SRV.Anexo" Multiplicity="*" Role="ToRole_ContratoAnexo"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ContratoAnexo">
+                        <PropertyRef Name="ContratoFactoring"/>
+                    </Principal>
+                    <Dependent Role="ToRole_ContratoAnexo">
+                        <PropertyRef Name="ContratoFactoring"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="ZFIORI_CONTRATO_FOR_DIV_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ContratoSet" EntityType="ZFIORI_CONTRATO_FOR_DIV_SRV.Contrato" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="AnexoSet" EntityType="ZFIORI_CONTRATO_FOR_DIV_SRV.Anexo" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="FornecedorSet" EntityType="ZFIORI_CONTRATO_FOR_DIV_SRV.Fornecedor" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <AssociationSet Name="ContratoAnexoSet" Association="ZFIORI_CONTRATO_FOR_DIV_SRV.ContratoAnexo" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ContratoSet" Role="FromRole_ContratoAnexo"/>
+                    <End EntitySet="AnexoSet" Role="ToRole_ContratoAnexo"/>
+                </AssociationSet>
+            </EntityContainer>
+            <atom:link rel="self" href="http://anadevfront:2500/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="http://anadevfront:2500/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
