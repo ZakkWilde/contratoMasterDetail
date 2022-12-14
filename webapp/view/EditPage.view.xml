@@ -70,7 +70,6 @@
                         documentId="{ContratoFactoring}" 
                         fileName="{Filename}" 
                         mimeType="{Filetype}"
-                        url="/sap/opu/odata/sap/ZFILE_EX_SRV/ContratoSet('{ContratoFactoring}')/ContratoAnexo"
                         enableEdit="false" 
                         enableDelete="false" 
                         visibleDelete="false"
