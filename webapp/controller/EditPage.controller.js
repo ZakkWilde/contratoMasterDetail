@@ -8,15 +8,15 @@ sap.ui.define([
     "sap/m/UploadCollectionParameter",
     "sap/m/MessageBox",
 
-], function (Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageBox) {
+], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageBox) {
     'use strict';
 
     return Controller.extend("zfiorictr1.controller.EditPage", {
 
-        onInit: function (oEvent) {
+        onInit: function(oEvent) {
 
             var oRoute = this.getOwnerComponent().getRouter();
-            var oAttach = oRoute.attachRouteMatched(function (oEvent) {
+            var oAttach = oRoute.attachRouteMatched(function(oEvent) {
                 return oEvent.getParameter("arguments");
             });
 
@@ -29,7 +29,7 @@ sap.ui.define([
             var oRouter = this.getOwnerComponent().getRouter();
             oRouter.getRoute("RouteEditPage").attachMatched(this._onRouteMatched, this);
         },
-        _onRouteMatched: function (oEvent) {
+        _onRouteMatched: function(oEvent) {
             var oArgs, oView;
             oArgs = oEvent.getParameter("arguments");
             oView = this.getView();
@@ -40,24 +40,24 @@ sap.ui.define([
                 parameters: { expand: "ContratoAnexo" },
                 events: {
                     change: this._onBindingChange.bind(this),
-                    dataRequested: function (oEvent) {
+                    dataRequested: function(oEvent) {
                         oView.setBusy(true);
                     },
-                    dataReceived: function (oEvent) {
+                    dataReceived: function(oEvent) {
                         oView.setBusy(false);
                     }
                 }
             });
 
-            return retId; 
+            return retId;
         },
-        _onBindingChange: function () {
+        _onBindingChange: function() {
             // No data for the binding
             if (!this.getView().getBindingContext()) {
                 this.getOwnerComponent().getRouter().getTargets().display("notFound");
             }
         },
-        onValueHelpRequest: function (oEvent) {
+        onValueHelpRequest: function(oEvent) {
             var sInputValue = oEvent.getSource().getValue(),
                 oView = this.getView();
 
@@ -66,12 +66,12 @@ sap.ui.define([
                     id: oView.getId(),
                     name: "zfiorictr1.view.ValueHelpDialog",
                     controller: this
-                }).then(function (oDialog) {
+                }).then(function(oDialog) {
                     oView.addDependent(oDialog);
                     return oDialog;
                 });
             }
-            this._pValueHelpDialog.then(function (oDialog) {
+            this._pValueHelpDialog.then(function(oDialog) {
                 // Create a filter for the binding
                 oDialog.getBinding("items").filter([new Filter("Name1", FilterOperator.Contains, sInputValue)]);
                 // Open ValueHelpDialog filtered by the input's value
@@ -79,14 +79,14 @@ sap.ui.define([
             });
         },
 
-        onValueHelpSearch: function (oEvent) {
+        onValueHelpSearch: function(oEvent) {
             var sValue = oEvent.getParameter("value");
             var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
 
             oEvent.getSource().getBinding("items").filter([oFilter]);
         },
 
-        onValueHelpClose: function (oEvent) {
+        onValueHelpClose: function(oEvent) {
             var oSelectedItem = oEvent.getParameter("selectedItem");
             oEvent.getSource().getBinding("items").filter([]);
 
@@ -98,11 +98,11 @@ sap.ui.define([
             this.byId("supText").setText(oSelectedItem.getTitle());
         },
 
-        onChange: function (oEvent) {
+        onChange: function(oEvent) {
             //Security token doesn't work here.
         },
 
-        onBeforeUploadStarts: function (oEvent) {
+        onBeforeUploadStarts: function(oEvent) {
 
             var ContratoFactoring = this.getView().byId("HeaderEdit").getTitle();
 
@@ -129,13 +129,13 @@ sap.ui.define([
             });
             oEvent.getParameters().addHeaderParameter(oToken);
 
-            setTimeout(function () {
+            setTimeout(function() {
                 //MessageToast.show("Event beforeUploadStarts triggered");
             }, 4000);
 
         },
 
-        onSave: function (oEvent) {
+        onSave: function(oEvent) {
             var oUploadCollection = this.byId("UploadCollection");
             var cFiles = oUploadCollection.getItems().length;
 
@@ -156,11 +156,12 @@ sap.ui.define([
             if (!dataIni) {
                 MessageToast.show("Data Inicial não Preenchida");
                 return;
-            } /* else {
-                if (dataIni < dataAtual) {
-                    MessageToast.show("Data Inicial deve ser maior que a data atual")
-                }
-            } */
+            }
+            /* else {
+                           if (dataIni < dataAtual) {
+                               MessageToast.show("Data Inicial deve ser maior que a data atual")
+                           }
+                       } */
 
             if (!dataFim) {
                 MessageToast.show("Data Final não preenchida");
@@ -192,7 +193,7 @@ sap.ui.define([
             }
 
             this.getOwnerComponent().getModel().create("/ContratoSet", formData, {
-                success: function (oEnv) {
+                success: function(oEnv) {
                     if (oEnv !== "" || oEnv !== undefined) {
                         if (cFiles > 0) {
                             oUploadCollection.upload();
@@ -202,7 +203,7 @@ sap.ui.define([
                     }
 
                 },
-                error: function (cc, vv) {
+                error: function(cc, vv) {
 
                     MessageBox.error(cc);
                     MessageBox.error(vv);
@@ -212,19 +213,19 @@ sap.ui.define([
             });
         },
 
-        onFileDeleted: function (oEvent) {
+        onFileDeleted: function(oEvent) {
 
         },
 
-        onFilenameLengthExceed: function (oEvent) {
+        onFilenameLengthExceed: function(oEvent) {
             MessageToast.show("Comprimento do arquivo excedido");
         },
 
-        onFileSizeExceed: function (oEvent) {
+        onFileSizeExceed: function(oEvent) {
             MessageToast.show("Tamanho do arquivo excedido");
         },
 
-        onUploadComplete: function (oEvent) {
+        onUploadComplete: function(oEvent) {
 
             this.getView().getModel().refresh();
 
@@ -249,7 +250,7 @@ sap.ui.define([
             }
         },
 
-        onNavBack: function () {
+        onNavBack: function() {
             var oHistory = History.getInstance();
             var sPreviousHash = oHistory.getPreviousHash();
 
@@ -261,9 +262,8 @@ sap.ui.define([
             }
         },
 
-        onCanc: function () {
+        onCanc: function() {
 
-            this.getView().byId("HeaderCreate").setNumber("");
             this.getView().byId("dataInicio").setValue("");
             this.getView().byId("dataFim").setValue("");
             this.getView().byId("supplierInput").setValue("");
@@ -284,7 +284,7 @@ sap.ui.define([
                 console.log(oError);
             }
 
-            onNavBack();
+            this.onNavBack();
         }
 
     });
