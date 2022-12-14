@@ -7,7 +7,7 @@
                     id="form"
                     editable="false"
                     layout="ResponsiveGridLayout"
-                    title="Criação de Contrato"
+                    title="{i18n>titleForm}"
                     labelSpanXL="3"
                     labelSpanL="3"
                     labelSpanM="3"
@@ -23,13 +23,13 @@
                 >
                     <f:content>
                         <Label text="{i18n>ctr}" />
-                        <Input id="idContrato" />
+                        <Input id="idContrato" maxLength="18"/>
                         <Text />
                         <Label text="{i18n>ini}" />
-                        <DatePicker id="dataInicio" placeholder="Data de Início" valueFormat="dd-MM-yyyy" />
+                        <DatePicker id="dataInicio" placeholder="{i18n>dataIni}" valueFormat="dd-MM-yyyy" />
                         <Text />
                         <Label text="{i18n>Fim}" />
-                        <DatePicker id="dataFim" placeholder="Data de Fim" valueFormat="dd-MM-yyyy" />
+                        <DatePicker id="dataFim" placeholder="{i18n>dataFim}" valueFormat="dd-MM-yyyy" />
                         <Text />
                         <Label text="{i18n>ff}" />
                         <Input id="supplierInput" showSuggestion="true" showValueHelp="true" valueHelpRequest=".onValueHelpRequest" suggestionItems="{/FornecedorSet}">
@@ -48,7 +48,7 @@
                 multiple="true"
                 sameFilenameAllowed="true"
                 instantUpload="false"
-                noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload"
+                noDataDescription="{i18n>drop}"
                 change="onChange"
                 uploadComplete="onUploadComplete"
                 beforeUploadStarts="onBeforeUploadStarts"
@@ -60,8 +60,8 @@
         <footer>
             <OverflowToolbar>
                 <ToolbarSpacer />
-                <Button id="save" icon="sap-icon://create" text="Gravar" type="Accept" press="onSave" />
-                <Button id="canc" icon="sap-icon://sys-cancel" text="Cancelar" type="Reject" press="onCanc" />
+                <Button id="save" icon="sap-icon://create" text="{i18n>save}" type="Accept" press="onSave" />
+                <Button id="canc" icon="sap-icon://sys-cancel" text="{i18n>canc}" type="Reject" press="onCanc" />
             </OverflowToolbar>
         </footer>
     </Page>
