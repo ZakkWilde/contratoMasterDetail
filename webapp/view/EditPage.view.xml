@@ -57,10 +57,10 @@
                 uploadComplete="onUploadComplete"
                 beforeUploadStarts="onBeforeUploadStarts"
                 uploadEnabled="true"
-                fileDeleted="onFileDeleted"
+                fileDeleted=".onFileDeleted"
                 filenameLengthExceed="onFilenameLengthExceed"
                 fileSizeExceed="onFileSizeExceed"
-                items="{ContratoAnexo}"
+                items="{ path: 'ContratoToEditAnexos', templateShareable: false }"
                 uploadUrl="/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/AnexoSet"
                 >
                 <items>
@@ -68,11 +68,12 @@
                         id="upCollection" 
                         visibleEdit="false" 
                         documentId="{ContratoFactoring}" 
-                        fileName="{Filename}" 
+                        fileName="{FileName}" 
                         mimeType="{Filetype}"
                         enableEdit="false" 
-                        enableDelete="false" 
-                        visibleDelete="false"
+                        enableDelete="true" 
+                        visibleDelete="true"
+                        deletePress=".onFileDeleted"
                     />
                 </items>
             </UploadCollection>

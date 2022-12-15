@@ -7,8 +7,9 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/m/UploadCollectionParameter",
     "sap/m/MessageBox",
+    "sap/base/util/deepExtend"
 
-], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageBox) {
+], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageBox, deepExtend) {
     'use strict';
 
     return Controller.extend("zfiorictr1.controller.EditPage", {
@@ -19,12 +20,6 @@ sap.ui.define([
             var oAttach = oRoute.attachRouteMatched(function(oEvent) {
                 return oEvent.getParameter("arguments");
             });
-
-            //Set Attachment Parameter
-            //var attachLen = oAttach.getHashChanger().getHash().length;
-            //var idAttach = oAttach.getHashChanger().getHash().substring(14, attachLen);
-            //var uploadCollection = this.getView().byId("UploadCollection");
-            //uploadCollection.setUploadUrl("/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/ContratoSet('" + idAttach + "')/ContratoAnexo");
 
             var oRouter = this.getOwnerComponent().getRouter();
             oRouter.getRoute("RouteEditPage").attachMatched(this._onRouteMatched, this);
@@ -37,7 +32,7 @@ sap.ui.define([
 
             oView.bindElement({
                 path: "/ContratoSet('" + oArgs.objectId + "')",
-                parameters: { expand: "ContratoAnexo" },
+                parameters: { expand: "ContratoToEditAnexos" },
                 events: {
                     change: this._onBindingChange.bind(this),
                     dataRequested: function(oEvent) {
@@ -100,6 +95,47 @@ sap.ui.define([
 
         onChange: function(oEvent) {
             //Security token doesn't work here.
+            const oUploadCollection = this.getView().byId("UploadCollection");
+            const sPath = this.getView().getBindingContext().getPath();
+
+            const aFileName = [];
+
+            for (var i = 0; i < oUploadCollection.getItems().length; i++) {
+                aFileName.push(oUploadCollection.getItems()[i].getProperty("fileName"));
+            }
+
+            const aFile = oEvent.getParameters().files;
+            var oUpData, oUpItem;
+
+            aFile.forEach(element => {
+                if (aFileName.some((name) => element.name === name)) {
+
+                    MessageBox.error("O nome do arquivo não pode ser o mesmo ou já existir para este contrato!");
+
+                    //oUpData = oUploadCollection.getModel().getData(sPath);
+                    oUpData = oUploadCollection.getModel().getData();
+                    oUpItem = deepExtend({}, oUpData).items;
+
+                    jQuery.each(oUpItem, function(index) {
+                        if (oUpItem[index] && oUpItem[index].fileName === element.name) {
+                            oUpItem.splice(index, 1);
+                        }
+                    });
+
+                    oUploadCollection.getModel().setData({
+                        "items": oUpItem
+                    });
+
+                }
+            });
+
+
+            //file unico 
+            /* var sFileName = oEvent.getParameters().files[0].name;
+
+            if(aFileName.some( (name) => name === sFileName ) ) {
+                MessageBox.error("O nome do arquivo não pode ser o mesmo ou já existir para este contrato!"); 
+            } */
         },
 
         onBeforeUploadStarts: function(oEvent) {
@@ -214,6 +250,41 @@ sap.ui.define([
         },
 
         onFileDeleted: function(oEvent) {
+
+            var oView = this.getView()
+
+            var document = oEvent.getSource().getProperty("documentId");
+            var fileName = oEvent.getSource().getProperty("fileName");
+
+            oView.setBusy(true);
+
+            var that = this;
+
+            MessageBox.confirm("Deseja deletar o arquivo? ", {
+                onClose: function(sAction) {
+
+                    if (sAction == 'OK') {
+                        //ContratoFactoring='File3',Filename='teste.pdf'
+                        that.getOwnerComponent().getModel().remove("/EditAnexoSet(ContratoFactoring='" + document + "',Filename='" + fileName + "')", {
+                            method: 'DELETE',
+                            success: function(oEnv, oResp) {
+                                if (oEnv !== "" || oEnv !== undefined) {
+                                    MessageBox.success("Deleted successfully.");
+                                } else {
+                                    MessageBox.error("Not able to delete. Contract already used");
+                                    MessageBox.error(oResp);
+                                }
+                                that.getView().setBusy(false);
+                            },
+                            error: function(cc, vv) {
+                                MessageBox.error(cc);
+                                MessageBox.error(vv);
+                                that.getView().setBusy(false);
+                            }
+                        });
+                    } else { that.getView().setBusy(false); }
+                }
+            });
 
         },
 
