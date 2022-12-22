@@ -43,8 +43,6 @@
             </VBox>
             <UploadCollection
                 id="UploadCollection"
-                maximumFilenameLength="55"
-                maximumFileSize="10"
                 multiple="true"
                 sameFilenameAllowed="true"
                 instantUpload="false"

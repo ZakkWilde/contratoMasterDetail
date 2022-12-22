@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<SelectDialog
 		id="selectDialog"
-		title="Fornecedores"
+		title="{i18n>MasterPage}"
 		items="{/FornecedorSet}"
 		search=".onValueHelpSearch"
 		confirm=".onValueHelpClose"

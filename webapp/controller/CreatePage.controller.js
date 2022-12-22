@@ -1,24 +1,26 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/core/routing/History",
-    "sap/ui/core/Fragment",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/m/UploadCollectionParameter",
-    "sap/m/MessageToast",
-    "sap/m/MessageBox",
-],
+        "sap/ui/core/mvc/Controller",
+        "sap/ui/core/routing/History",
+        "sap/ui/core/Fragment",
+        "sap/ui/model/Filter",
+        "sap/ui/model/FilterOperator",
+        "sap/m/UploadCollectionParameter",
+        "sap/m/MessageToast",
+        "sap/m/MessageBox",
+    ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageToast, MessageBox) {
+    function(Controller, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageToast, MessageBox) {
         "use strict";
+
+        var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound;
 
         return Controller.extend("zfiorictr1.controller.CreatePage", {
 
-            onInit: function () {
+            onInit: function() {
 
-                this.getOwnerComponent().getRouter().attachRouteMatched(function (oEvent) {
+                this.getOwnerComponent().getRouter().attachRouteMatched(function(oEvent) {
                     var oData = oEvent.getParameter("arguments");
                 });
 
@@ -26,7 +28,7 @@ sap.ui.define([
                 oRouter.getRoute("RouteCreatePage").attachMatched(this._onRouteMatched, this);
 
             },
-            _onRouteMatched: function (oEvent) {
+            _onRouteMatched: function(oEvent) {
                 var oArgs, oView;
                 oArgs = oEvent.getParameter("arguments");
                 oView = this.getView();
@@ -35,23 +37,23 @@ sap.ui.define([
                     path: "/FornecedorSet('" + oArgs.objectId + "')",
                     events: {
                         change: this._onBindingChange.bind(this),
-                        dataRequested: function (oEvent) {
+                        dataRequested: function(oEvent) {
                             oView.setBusy(true);
                         },
-                        dataReceived: function (oEvent) {
+                        dataReceived: function(oEvent) {
                             oView.setBusy(false);
                         }
                     }
                 });
             },
-            _onBindingChange: function (oEvent) {
+            _onBindingChange: function(oEvent) {
                 // No data for the binding
                 if (!this.getView().getBindingContext()) {
                     this.getOwnerComponent().getRouter().getTargets().display("notFound");
                 }
             },
 
-            onValueHelpRequest: function (oEvent) {
+            onValueHelpRequest: function(oEvent) {
                 var sInputValue = oEvent.getSource().getValue(),
                     oView = this.getView();
 
@@ -60,12 +62,12 @@ sap.ui.define([
                         id: oView.getId(),
                         name: "zfiorictr1.view.ValueHelpDialog",
                         controller: this
-                    }).then(function (oDialog) {
+                    }).then(function(oDialog) {
                         oView.addDependent(oDialog);
                         return oDialog;
                     });
                 }
-                this._pValueHelpDialog.then(function (oDialog) {
+                this._pValueHelpDialog.then(function(oDialog) {
                     // Create a filter for the binding
                     oDialog.getBinding("items").filter([new Filter("Name1", FilterOperator.Contains, sInputValue)]);
                     // Open ValueHelpDialog filtered by the input's value
@@ -73,14 +75,19 @@ sap.ui.define([
                 });
             },
 
-            onValueHelpSearch: function (oEvent) {
+            onValueHelpSearch: function(oEvent) {
                 var sValue = oEvent.getParameter("value");
-                var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
+                //var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
 
-                oEvent.getSource().getBinding("items").filter([oFilter]);
+                //oEvent.getSource().getBinding("items").filter([oFilter]);
+                oEvent.getSource().getBinding("items").filter(new Filter([
+                    new Filter("Name1", FilterOperator.Contains, sValue),
+                    new Filter("Stceg", FilterOperator.Contains, sValue),
+                    new Filter("Lifnr", FilterOperator.Contains, sValue)
+                ], false));
             },
 
-            onValueHelpClose: function (oEvent) {
+            onValueHelpClose: function(oEvent) {
                 var oSelectedItem = oEvent.getParameter("selectedItem");
                 oEvent.getSource().getBinding("items").filter([]);
 
@@ -92,7 +99,7 @@ sap.ui.define([
                 this.byId("supText").setText(oSelectedItem.getTitle());
             },
 
-            onBeforeUploadStarts: function (oEvent) {
+            onBeforeUploadStarts: function(oEvent) {
 
                 var ContratoFactoring = this.getView().byId("idContrato").getValue();
 
@@ -119,60 +126,78 @@ sap.ui.define([
                 });
                 oEvent.getParameters().addHeaderParameter(oToken);
 
-                setTimeout(function () {
+                setTimeout(function() {
                     //MessageToast.show("Event beforeUploadStarts triggered");
                 }, 4000);
             },
 
-            onChange: function (oEvent) {
+            onChange: function(oEvent) {
                 //Security token doesn't work here.
             },
 
-            onSave: function (oEvent) {
-                this.getView().setBusy(true);
+            onSave: function(oEvent) {
+                var oView = this.getView();
+                oView.setBusy(true);
                 var oUploadCollection = this.byId("UploadCollection");
                 var cFiles = oUploadCollection.getItems().length;
 
-                var ctrFac = this.getView().byId("idContrato").getValue();
-                var fornec = this.getView().byId("HeaderCreate").getNumber();
-                var forName = this.getView().byId("HeaderCreate").getIntro();
-                var dataIni = this.getView().byId("dataInicio").getDateValue();
-                var dataFim = this.getView().byId("dataFim").getDateValue();
-                var supplier = this.getView().byId("supplierInput").getValue();
-                var suppName = this.getView().byId("supText").getText();
+                var ctrFac = oView.byId("idContrato").getValue();
+                var fornec = oView.byId("HeaderCreate").getNumber();
+                var forName = oView.byId("HeaderCreate").getIntro();
+                var dataIni = oView.byId("dataInicio").getDateValue();
+                var dataFim = oView.byId("dataFim").getDateValue();
+                var supplier = oView.byId("supplierInput").getValue();
+                var suppName = oView.byId("supText").getText();
+
+                var oViewBundle = oView.getModel("i18n").getResourceBundle();
+
+                contratoNotFound = oViewBundle.getText("contratoNotFound");
+                initialDateNotFound = oViewBundle.getText("initialDateNotFound");
+                finalDateNotFound = oViewBundle.getText("finalDateNotFound");
+                finalDateCheck = oViewBundle.getText("finalDateCheck");
+                divSupNotFound = oViewBundle.getText("divSupNotFound");
+                supNotFound = oViewBundle.getText("supNotFound");
 
                 if (!ctrFac) {
-                    MessageToast.show("Contrato Não Preenchido");
+                    MessageBox.alert(contratoNotFound);
+                    oView.setBusy(false);
                     return;
                 }
 
                 //const dataAtual = new Date();
                 if (!dataIni) {
-                    MessageToast.show("Data Inicial não Preenchida");
+                    MessageBox.alert(initialDateNotFound);
+                    oView.setBusy(false);
                     return;
-                } /* else {
-                    if (dataIni < dataAtual) {
-                        MessageToast.show("Data Inicial deve ser maior que a data atual")
+                }
+                /* else {
+                if (dataIni < dataAtual) {
+                    MessageToast.show("Data Inicial deve ser maior que a data atual")
                     }
                 } */
 
 
                 if (!dataFim) {
-                    MessageToast.show("Data Final não preenchida");
+                    MessageBox.alert(finalDateNotFound);
+                    oView.setBusy(false);
                     return;
                 } else {
                     if (dataFim <= dataIni) {
-                        MessageToast.show("Data final deve ser maior que a data Inicial");
+                        MessageBox.alert(finalDateCheck);
+                        oView.setBusy(false);
+                        return;
                     }
                 }
 
                 if (!supplier) {
-                    MessageToast.show("Fornecedor Divergente não preenchido");
+                    MessageBox.alert(divSupNotFound);
+                    oView.setBusy(false);
                     return;
                 }
 
                 if (!fornec) {
-                    MessageToast.show("Fornecedor não preenchido");
+                    MessageBox.alert(supNotFound);
+                    oView.setBusy(false);
                     return;
                 }
 
@@ -186,10 +211,10 @@ sap.ui.define([
                     "NomeForneD": suppName
                 }
 
-                var that = this; 
+                var that = this;
 
                 this.getOwnerComponent().getModel().create("/ContratoSet", formData, {
-                    success: function (oEnv, Response, jqXHR) {
+                    success: function(oEnv, Response, jqXHR) {
                         if (oEnv !== "" || oEnv !== undefined) {
                             if (cFiles > 0) {
                                 oUploadCollection.upload();
@@ -199,8 +224,10 @@ sap.ui.define([
                             }
                         }
 
+                        that.onCanc();
+
                     },
-                    error: function (cc, vv) {
+                    error: function(cc, vv) {
 
                         MessageBox.error(cc);
                         MessageBox.error(vv);
@@ -211,7 +238,7 @@ sap.ui.define([
                 });
             },
 
-            onUploadComplete: function (oEvent) {
+            onUploadComplete: function(oEvent) {
                 this.getView().getModel().refresh();
 
                 this.getView().byId("idContrato").setValue("");
@@ -237,7 +264,7 @@ sap.ui.define([
 
             },
 
-            onNavBack: function () {
+            onNavBack: function() {
                 var oHistory = History.getInstance();
                 var sPreviousHash = oHistory.getPreviousHash();
 
@@ -249,7 +276,7 @@ sap.ui.define([
                 }
             },
 
-            onCanc: function () {
+            onCanc: function() {
 
                 this.getView().byId("idContrato").setValue("");
                 this.getView().byId("HeaderCreate").setNumber("");
