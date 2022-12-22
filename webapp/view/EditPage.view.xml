@@ -47,8 +47,6 @@
             </VBox>
             <UploadCollection
                 id="UploadCollection"
-                maximumFilenameLength="55"
-                maximumFileSize="10"
                 multiple="true"
                 sameFilenameAllowed="true"
                 instantUpload="false"
@@ -58,8 +56,6 @@
                 beforeUploadStarts="onBeforeUploadStarts"
                 uploadEnabled="true"
                 fileDeleted=".onFileDeleted"
-                filenameLengthExceed="onFilenameLengthExceed"
-                fileSizeExceed="onFileSizeExceed"
                 items="{ path: 'ContratoToEditAnexos', templateShareable: false }"
                 uploadUrl="/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/AnexoSet"
                 >
