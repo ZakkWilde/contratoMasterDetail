@@ -30,7 +30,7 @@
                 <items>
                     <ColumnListItem id="detailItens" vAlign="Middle" type="Navigation" press="onItemPress">
                         <cells>
-                            <ObjectIdentifier id="item_contrato" title="{ContratoFactoring}" />
+                            <ObjectIdentifier id="item_contrato" title="{ path: 'ContratoFactoring', formatter: '.formatter.addSpace'}" />
                             <ObjectIdentifier id="item_datai" title="{ path: 'DataInicio', type: 'sap.ui.model.type.Date', formatOptions: { style: 'medium' }}" />
                             <ObjectIdentifier id="item_dataf" title="{ path: 'DataFim', type: 'sap.ui.model.type.Date', formatOptions: { style: 'medium' }}" />
                             <ObjectIdentifier id="item_for_div" title="{NomeForneD}" text="{FornecedorDivergente}" />

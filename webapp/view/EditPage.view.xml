@@ -8,7 +8,7 @@
     xmlns="sap.m">
     <Page id="editPage" title="{i18n>EditPage}" showHeader="true" showFooter="true" showNavButton="true" navButtonPress="onNavBack">
         <content>
-            <ObjectHeader id="HeaderEdit"  intro="{NomeForne}" title="{ContratoFactoring}" icon="sap-icon://business-card" number="{Fornecedor}" numberState="None" titleActive="false" backgroundDesign="Translucent" condensed="false" visible="true" />
+            <ObjectHeader id="HeaderEdit"  intro="{NomeForne}" title="{ path:'ContratoFactoring', formatter: '.formatter.addSpace'}" icon="sap-icon://business-card" number="{Fornecedor}" numberState="None" titleActive="false" backgroundDesign="Translucent" condensed="false" visible="true" />
             <VBox class="sapUiSmallMargin">
                 <form:SimpleForm
                     id="formEdit"

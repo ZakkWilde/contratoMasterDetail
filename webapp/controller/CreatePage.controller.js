@@ -5,18 +5,24 @@ sap.ui.define([
         "sap/ui/model/Filter",
         "sap/ui/model/FilterOperator",
         "sap/m/UploadCollectionParameter",
+        "../model/formatter",
         "sap/m/MessageToast",
         "sap/m/MessageBox",
     ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function(Controller, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageToast, MessageBox) {
+    function(Controller, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageToast, MessageBox) {
         "use strict";
 
-        var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound;
+        var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar;
+        var cont, qtdFile;
+        var msgRet = [];
+        const rRegex = /\W/;
 
         return Controller.extend("zfiorictr1.controller.CreatePage", {
+
+            formatter: formatter,
 
             onInit: function() {
 
@@ -141,6 +147,9 @@ sap.ui.define([
                 var oUploadCollection = this.byId("UploadCollection");
                 var cFiles = oUploadCollection.getItems().length;
 
+                qtdFile = cFiles;
+                cont = 0;
+
                 var ctrFac = oView.byId("idContrato").getValue();
                 var fornec = oView.byId("HeaderCreate").getNumber();
                 var forName = oView.byId("HeaderCreate").getIntro();
@@ -157,11 +166,21 @@ sap.ui.define([
                 finalDateCheck = oViewBundle.getText("finalDateCheck");
                 divSupNotFound = oViewBundle.getText("divSupNotFound");
                 supNotFound = oViewBundle.getText("supNotFound");
+                noSpecialChar = oViewBundle.getText("noSpecialChar");
 
                 if (!ctrFac) {
                     MessageBox.alert(contratoNotFound);
                     oView.setBusy(false);
                     return;
+                } else {
+                    var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
+                    if (rRegex.test(facNoSpace)) {
+                        MessageBox.error(noSpecialChar);
+                        oView.setBusy(false);
+                        return;
+                    } else {
+                        ctrFac = facNoSpace;
+                    }
                 }
 
                 //const dataAtual = new Date();
@@ -219,12 +238,11 @@ sap.ui.define([
                             if (cFiles > 0) {
                                 oUploadCollection.upload();
                             } else {
-                                MessageBox.success("Created successfully.");
+                                MessageToast.show("Created successfully.");
                                 that.getView().setBusy(false);
+                                that.onCanc();
                             }
                         }
-
-                        that.onCanc();
 
                     },
                     error: function(cc, vv) {
@@ -242,7 +260,7 @@ sap.ui.define([
                 this.getView().getModel().refresh();
 
                 this.getView().byId("idContrato").setValue("");
-                this.getView().byId("HeaderCreate").setNumber("");
+                //this.getView().byId("HeaderCreate").setNumber("");
                 this.getView().byId("dataInicio").setValue("");
                 this.getView().byId("dataFim").setValue("");
                 this.getView().byId("supplierInput").setValue("");
@@ -260,7 +278,26 @@ sap.ui.define([
                     }
                 }
 
-                this.getView().setBusy(false);
+                const sStatus = oEvent.getParameter('files')[0].status;
+                //const sName = oEvent.getParameter('files')[0].name;
+
+                cont = cont + 1;
+                msgRet.push(sStatus);
+
+                var that = this;
+
+                if (cont === qtdFile) {
+
+                    this.getView().setBusy(false);
+                    if (msgRet.some((element) => element >= 200 && element <= 300)) {
+                        MessageToast.show("Create Successfuly");
+                        that.onCanc();
+                    } else {
+                        MessageBox.error("Record not created, contact support.");
+                        that.onCanc();
+                    };
+
+                }
 
             },
 
@@ -279,7 +316,7 @@ sap.ui.define([
             onCanc: function() {
 
                 this.getView().byId("idContrato").setValue("");
-                this.getView().byId("HeaderCreate").setNumber("");
+                //this.getView().byId("HeaderCreate").setNumber("");
                 this.getView().byId("dataInicio").setValue("");
                 this.getView().byId("dataFim").setValue("");
                 this.getView().byId("supplierInput").setValue("");

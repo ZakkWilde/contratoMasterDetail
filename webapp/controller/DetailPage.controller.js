@@ -1,72 +1,76 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/m/MessageToast",
-    "sap/m/MessageBox",
-    "sap/ui/model/json/JSONModel"
-],
+        "sap/ui/core/mvc/Controller",
+        "sap/m/MessageToast",
+        "sap/m/MessageBox",
+        "sap/ui/model/json/JSONModel",
+        "../model/formatter"
+    ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, MessageToast, MessageBox, JSONModel) {
+    function(Controller, MessageToast, MessageBox, JSONModel, formatter) {
         "use strict";
 
         return Controller.extend("zfiorictr1.controller.DetailPage", {
-            onInit: function () {
 
-                this.getOwnerComponent().getRouter().attachRouteMatched( function(oEvent){
+            formatter: formatter,
+
+            onInit: function() {
+
+                this.getOwnerComponent().getRouter().attachRouteMatched(function(oEvent) {
                     var oData = oEvent.getParameter("arguments");
 
                 });
 
                 var oRouter = this.getOwnerComponent().getRouter();
-			    oRouter.getRoute("RouteDetailPage").attachMatched(this._onRouteMatched, this);
+                oRouter.getRoute("RouteDetailPage").attachMatched(this._onRouteMatched, this);
 
             },
-            _onRouteMatched : function (oEvent) {
+            _onRouteMatched: function(oEvent) {
                 var oArgs, oView;
                 oArgs = oEvent.getParameter("arguments");
                 oView = this.getView();
-    
+
                 oView.bindElement({
-                    path : "/FornecedorSet('" + oArgs.objectId + "')",
-                    events : {
+                    path: "/FornecedorSet('" + oArgs.objectId + "')",
+                    events: {
                         change: this._onBindingChange.bind(this),
-                        dataRequested: function (oEvent) {
+                        dataRequested: function(oEvent) {
                             oView.setBusy(true);
                         },
-                        dataReceived: function (oEvent) {
+                        dataReceived: function(oEvent) {
                             oView.setBusy(false);
                         }
                     }
                 });
             },
-            _onBindingChange : function (oEvent) {
+            _onBindingChange: function(oEvent) {
                 // No data for the binding
                 if (!this.getView().getBindingContext()) {
                     this.getOwnerComponent().getRouter().getTargets().display("notFound");
                 }
             },
 
-            onDelete : function (oEvent) {
+            onDelete: function(oEvent) {
 
-                
+
                 try {
-                    var ContratoFactoring = this.getView().byId("DetailTable").getSelectedItem().getBindingContext().getProperty("ContratoFactoring");    
+                    var ContratoFactoring = this.getView().byId("DetailTable").getSelectedItem().getBindingContext().getProperty("ContratoFactoring");
                 } catch (error) {
                     console.log(error);
                     MessageToast.show("Nenhum contrato selecionado");
                 }
-                
-                var that = this; 
-                if(!ContratoFactoring){
+
+                var that = this;
+                if (!ContratoFactoring) {
                     MessageToast.show("No Contract Selected");
                     return;
                 }
 
-                if(ContratoFactoring){
+                if (ContratoFactoring) {
                     MessageBox.confirm("Toda a informação, incluindo anexos irá ser eliminada. Deseja continuar?", {
-                        onClose: function(sAction){
-                            if(sAction == 'OK'){
+                        onClose: function(sAction) {
+                            if (sAction == 'OK') {
                                 //Start to remove from Backend
                                 that.getOwnerComponent().getModel().remove("/ContratoSet('" + ContratoFactoring + "')", {
                                     method: "DELETE",
@@ -78,7 +82,7 @@ sap.ui.define([
                                             MessageBox.error(Response);
                                         }
                                     },
-                                    error: function (cc, vv) {
+                                    error: function(cc, vv) {
 
                                     }
                                 });
@@ -88,10 +92,10 @@ sap.ui.define([
                 }
             },
 
-            onItemPress: function(oEvent){
+            onItemPress: function(oEvent) {
 
-                var sContrato = oEvent.getSource().getBindingContext().getProperty("ContratoFactoring");                    
-                if(sContrato){
+                var sContrato = oEvent.getSource().getBindingContext().getProperty("ContratoFactoring");
+                if (sContrato) {
                     this.getOwnerComponent().getRouter().navTo("RouteEditPage", {
                         objectId: sContrato
                     });
@@ -101,8 +105,8 @@ sap.ui.define([
                 }
 
             },
-            
-            onCreate: function (oEvent) {
+
+            onCreate: function(oEvent) {
 
                 var oItem, oCtx;
                 oItem = oEvent.getSource();
@@ -112,8 +116,8 @@ sap.ui.define([
                     this.getOwnerComponent().getRouter().navTo("RouteCreatePage", {
                         objectId: oCtx.getProperty("Lifnr")
                     });
-                }else {
-                    MessageToast.show("Um fornecedor deve ser selecionado"); 
+                } else {
+                    MessageToast.show("Um fornecedor deve ser selecionado");
                     return;
                 }
             }

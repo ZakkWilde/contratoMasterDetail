@@ -6,13 +6,16 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/UploadCollectionParameter",
+    "../model/formatter",
     "sap/m/MessageBox",
     "sap/base/util/deepExtend"
 
-], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, MessageBox, deepExtend) {
+], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageBox, deepExtend) {
     'use strict';
 
     return Controller.extend("zfiorictr1.controller.EditPage", {
+
+        formatter: formatter,
 
         onInit: function(oEvent) {
 
@@ -186,6 +189,9 @@ sap.ui.define([
             if (!ctrFac) {
                 MessageToast.show("Contrato Não Preenchido");
                 return;
+            } else {
+                var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
+                ctrFac = facNoSpace;
             }
 
             const dataAtual = new Date();

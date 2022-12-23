@@ -1,5 +1,4 @@
-sap.ui.define([ "sap/ui/demo/bulletinboard/model/DateFormatter"
-], function (DateFormatter) {
+sap.ui.define([], function() {
     "use strict";
 
     return {
@@ -10,17 +9,22 @@ sap.ui.define([ "sap/ui/demo/bulletinboard/model/DateFormatter"
          * @param {string} sValue value to be formatted
          * @returns {string} formatted currency value with 2 digits
          */
-        currencyValue : function (sValue) {
+        currencyValue: function(sValue) {
             if (!sValue) {
                 return "";
             }
 
             return parseFloat(sValue).toFixed(2);
         },
-        date: function(date) {
+        /* date: function(date) {
 			return new DateFormatter({source: {pattern: "yyyy/MM/dd"}}).format(date);
-		}
+		} */
+        addSpace: function(sValue) {
+            if (sValue) {
+                var sSpace = sValue.replaceAll('_', ' ');
+                return sSpace;
+            }
+        }
     };
 
-}
-);
+});
