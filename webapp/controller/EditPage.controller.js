@@ -13,6 +13,11 @@ sap.ui.define([
 ], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageBox, deepExtend) {
     'use strict';
 
+    var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar;
+    var cont, qtdFile;
+    var msgRet = [];
+    const rRegex = /\W/;
+
     return Controller.extend("zfiorictr1.controller.EditPage", {
 
         formatter: formatter,
@@ -71,7 +76,7 @@ sap.ui.define([
             }
             this._pValueHelpDialog.then(function(oDialog) {
                 // Create a filter for the binding
-                oDialog.getBinding("items").filter([new Filter("Name1", FilterOperator.Contains, sInputValue)]);
+                oDialog.getBinding("items").filter([new Filter("Lifnr", FilterOperator.Contains, sInputValue)]);
                 // Open ValueHelpDialog filtered by the input's value
                 oDialog.open(sInputValue);
             });
@@ -79,9 +84,19 @@ sap.ui.define([
 
         onValueHelpSearch: function(oEvent) {
             var sValue = oEvent.getParameter("value");
-            var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
+            //var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
 
-            oEvent.getSource().getBinding("items").filter([oFilter]);
+            //oEvent.getSource().getBinding("items").filter([oFilter]);
+
+            var sValueUpper = sValue.toUpperCase();
+            oEvent.getSource().getBinding("items").filter(new Filter([
+                //new Filter("Name1", FilterOperator.Contains, sValue),
+                new Filter("Mcod1", FilterOperator.Contains, sValueUpper),
+                new Filter("Stceg", FilterOperator.Contains, sValueUpper),
+                new Filter("Lifnr", FilterOperator.Contains, sValueUpper)
+            ], false));
+
+
         },
 
         onValueHelpClose: function(oEvent) {
@@ -110,10 +125,15 @@ sap.ui.define([
             const aFile = oEvent.getParameters().files;
             var oUpData, oUpItem;
 
+            var messageFile = this.getView().getModel('i18n').getResourceBundle().getText('noSameFile');
+            if (!messageFile) {
+                messageFile = "O nome do arquivo não pode ser o mesmo ou já existir para este contrato!";
+            }
+
             aFile.forEach(element => {
                 if (aFileName.some((name) => element.name === name)) {
 
-                    MessageBox.error("O nome do arquivo não pode ser o mesmo ou já existir para este contrato!");
+                    MessageBox.error(messageFile);
 
                     //oUpData = oUploadCollection.getModel().getData(sPath);
                     oUpData = oUploadCollection.getModel().getData();
@@ -132,13 +152,6 @@ sap.ui.define([
                 }
             });
 
-
-            //file unico 
-            /* var sFileName = oEvent.getParameters().files[0].name;
-
-            if(aFileName.some( (name) => name === sFileName ) ) {
-                MessageBox.error("O nome do arquivo não pode ser o mesmo ou já existir para este contrato!"); 
-            } */
         },
 
         onBeforeUploadStarts: function(oEvent) {
@@ -175,6 +188,7 @@ sap.ui.define([
         },
 
         onSave: function(oEvent) {
+            this.getView().setBusy(true);
             var oUploadCollection = this.byId("UploadCollection");
             var cFiles = oUploadCollection.getItems().length;
 
@@ -186,42 +200,45 @@ sap.ui.define([
             var supplier = this.getView().byId("supplierInput").getValue();
             var suppName = this.getView().byId("supText").getText();
 
+            var oViewBundle = oView.getModel("i18n").getResourceBundle();
+
+            contratoNotFound = oViewBundle.getText("contratoNotFound");
+            initialDateNotFound = oViewBundle.getText("initialDateNotFound");
+            finalDateNotFound = oViewBundle.getText("finalDateNotFound");
+            finalDateCheck = oViewBundle.getText("finalDateCheck");
+            divSupNotFound = oViewBundle.getText("divSupNotFound");
+            supNotFound = oViewBundle.getText("supNotFound");
+
             if (!ctrFac) {
-                MessageToast.show("Contrato Não Preenchido");
+                MessageToast.show(contratoNotFound);
                 return;
             } else {
-                //var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
                 var facNoSpace = ctrFac.replaceAll(/\s/g, '%20'); //remove spaces
                 ctrFac = facNoSpace;
             }
 
             const dataAtual = new Date();
             if (!dataIni) {
-                MessageToast.show("Data Inicial não Preenchida");
+                MessageToast.show(initialDateNotFound);
                 return;
             }
-            /* else {
-                           if (dataIni < dataAtual) {
-                               MessageToast.show("Data Inicial deve ser maior que a data atual")
-                           }
-                       } */
 
             if (!dataFim) {
-                MessageToast.show("Data Final não preenchida");
+                MessageToast.show(finalDateNotFound);
                 return;
             } else {
                 if (dataFim <= dataIni) {
-                    MessageToast.show("Data final deve ser maior que a data Inicial");
+                    MessageToast.show(finalDateCheck);
                 }
             }
 
             if (!supplier) {
-                MessageToast.show("Fornecedor Divergente não preenchido");
+                MessageToast.show(divSupNotFound);
                 return;
             }
 
             if (!fornec) {
-                MessageToast.show("Fornecedor não preenchido");
+                MessageToast.show(supNotFound);
                 return;
             }
 
@@ -242,14 +259,15 @@ sap.ui.define([
                             oUploadCollection.upload();
                         } else {
                             MessageBox.success("Created successfully.");
+                            this.getView().setBusy(false);
                         }
                     }
 
                 },
                 error: function(cc, vv) {
 
-                    MessageBox.error(cc);
-                    MessageBox.error(vv);
+                    console.log(cc);
+                    console.log(vv);
                     MessageBox.error("New entry not created.");
 
                 }
@@ -326,6 +344,7 @@ sap.ui.define([
                     }
                 }
             }
+            this.getView().setBusy(false);
         },
 
         onNavBack: function() {

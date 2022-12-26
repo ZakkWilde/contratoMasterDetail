@@ -75,7 +75,7 @@ sap.ui.define([
                 }
                 this._pValueHelpDialog.then(function(oDialog) {
                     // Create a filter for the binding
-                    oDialog.getBinding("items").filter([new Filter("Name1", FilterOperator.Contains, sInputValue)]);
+                    oDialog.getBinding("items").filter([new Filter("Lifnr", FilterOperator.Contains, sInputValue)]);
                     // Open ValueHelpDialog filtered by the input's value
                     oDialog.open(sInputValue);
                 });
@@ -86,10 +86,12 @@ sap.ui.define([
                 //var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
 
                 //oEvent.getSource().getBinding("items").filter([oFilter]);
+                var sValueUpper = sValue.toUpperCase();
                 oEvent.getSource().getBinding("items").filter(new Filter([
-                    new Filter("Name1", FilterOperator.Contains, sValue),
-                    new Filter("Stceg", FilterOperator.Contains, sValue),
-                    new Filter("Lifnr", FilterOperator.Contains, sValue)
+                    //new Filter("Name1", FilterOperator.Contains, sValue),
+                    new Filter("Mcod1", FilterOperator.Contains, sValueUpper),
+                    new Filter("Stceg", FilterOperator.Contains, sValueUpper),
+                    new Filter("Lifnr", FilterOperator.Contains, sValueUpper)
                 ], false));
             },
 
@@ -179,9 +181,6 @@ sap.ui.define([
                         oView.setBusy(false);
                         return;
                     }
-                    /* else {
-                        ctrFac = facNoSpace;
-                    } */
                 }
 
                 //const dataAtual = new Date();
@@ -190,11 +189,6 @@ sap.ui.define([
                     oView.setBusy(false);
                     return;
                 }
-                /* else {
-                if (dataIni < dataAtual) {
-                    MessageToast.show("Data Inicial deve ser maior que a data atual")
-                    }
-                } */
 
 
                 if (!dataFim) {
@@ -238,7 +232,6 @@ sap.ui.define([
                         if (oEnv !== "" || oEnv !== undefined) {
                             if (cFiles > 0) {
                                 oUploadCollection.upload();
-                                that.getView().setBusy(false);
                             } else {
                                 MessageBox.success("Created successfully.");
                                 that.getView().setBusy(false);
@@ -249,8 +242,8 @@ sap.ui.define([
                     },
                     error: function(cc, vv) {
 
-                        MessageBox.error(cc);
-                        MessageBox.error(vv);
+                        console.log(cc);
+                        console.log(vv);
                         MessageBox.error("New entry not created.");
                         that.getView().setBusy(false);
 
@@ -289,7 +282,6 @@ sap.ui.define([
 
                 if (cont === qtdFile) {
 
-                    this.getView().setBusy(false);
                     if (msgRet.some((element) => element >= 200 && element <= 300)) {
                         MessageToast.show("Create Successfuly");
                         that.resetUpload();
@@ -297,8 +289,6 @@ sap.ui.define([
                         MessageBox.error("Record not created, contact support.");
                         that.resetUpload();
                     };
-
-                    this.getView().setBusy(false);
                 }
 
             },
@@ -317,8 +307,8 @@ sap.ui.define([
 
             onCanc: function() {
 
+                //clear screen parameters
                 this.getView().byId("idContrato").setValue("");
-                //this.getView().byId("HeaderCreate").setNumber("");
                 this.getView().byId("dataInicio").setValue("");
                 this.getView().byId("dataFim").setValue("");
                 this.getView().byId("supplierInput").setValue("");
@@ -339,15 +329,12 @@ sap.ui.define([
                     console.log(oError);
                 }
 
-                this.getView().setBusy(false);
                 var oHash = History.getInstance().getPreviousHash();
                 if (oHash !== undefined) {
                     window.history.go(-1);
                 } else {
                     this.getOwnerComponent().getRouter().navTo("RouteDetailPage", {}, true);
                 }
-
-                this.getView().setBusy(false);
 
             },
 
@@ -375,6 +362,8 @@ sap.ui.define([
                 } catch (oError) {
                     console.log(oError);
                 }
+
+                this.getView().setBusy(false);
 
             }
 

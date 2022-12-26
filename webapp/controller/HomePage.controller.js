@@ -52,11 +52,12 @@ sap.ui.define([
                 var oBinding = oList.getBinding("items");
                 //oBinding.filter(aFilters, FilterType.Application);
 
-
+                var sValueUpper = sQuery.toUpperCase();
                 oBinding.filter(new Filter([
-                    new Filter("Name1", FilterOperator.Contains, sQuery),
-                    new Filter("Stceg", FilterOperator.Contains, sQuery),
-                    new Filter("Lifnr", FilterOperator.Contains, sQuery)
+                    //new Filter("Name1", FilterOperator.Contains, sQuery),
+                    new Filter("Mcod1", FilterOperator.Contains, sValueUpper),
+                    new Filter("Stceg", FilterOperator.Contains, sValueUpper),
+                    new Filter("Lifnr", FilterOperator.Contains, sValueUpper)
                 ], false));
 
 
