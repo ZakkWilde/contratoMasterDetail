@@ -190,7 +190,8 @@ sap.ui.define([
                 MessageToast.show("Contrato Não Preenchido");
                 return;
             } else {
-                var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
+                //var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
+                var facNoSpace = ctrFac.replaceAll(/\s/g, '%20'); //remove spaces
                 ctrFac = facNoSpace;
             }
 

@@ -178,9 +178,10 @@ sap.ui.define([
                         MessageBox.error(noSpecialChar);
                         oView.setBusy(false);
                         return;
-                    } else {
-                        ctrFac = facNoSpace;
                     }
+                    /* else {
+                        ctrFac = facNoSpace;
+                    } */
                 }
 
                 //const dataAtual = new Date();

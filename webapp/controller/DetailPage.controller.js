@@ -96,6 +96,9 @@ sap.ui.define([
 
                 var sContrato = oEvent.getSource().getBindingContext().getProperty("ContratoFactoring");
                 if (sContrato) {
+                    //Remove Space not treated
+                    var sContratoNoSpace = sContrato.replaceAll(' ', '%20');
+                    sContrato = sContratoNoSpace;
                     this.getOwnerComponent().getRouter().navTo("RouteEditPage", {
                         objectId: sContrato
                     });
