@@ -238,8 +238,9 @@ sap.ui.define([
                         if (oEnv !== "" || oEnv !== undefined) {
                             if (cFiles > 0) {
                                 oUploadCollection.upload();
+                                that.getView().setBusy(false);
                             } else {
-                                MessageToast.show("Created successfully.");
+                                MessageBox.success("Created successfully.");
                                 that.getView().setBusy(false);
                                 that.onCanc();
                             }
@@ -261,7 +262,6 @@ sap.ui.define([
                 this.getView().getModel().refresh();
 
                 this.getView().byId("idContrato").setValue("");
-                //this.getView().byId("HeaderCreate").setNumber("");
                 this.getView().byId("dataInicio").setValue("");
                 this.getView().byId("dataFim").setValue("");
                 this.getView().byId("supplierInput").setValue("");
@@ -292,12 +292,13 @@ sap.ui.define([
                     this.getView().setBusy(false);
                     if (msgRet.some((element) => element >= 200 && element <= 300)) {
                         MessageToast.show("Create Successfuly");
-                        that.onCanc();
+                        that.resetUpload();
                     } else {
                         MessageBox.error("Record not created, contact support.");
-                        that.onCanc();
+                        that.resetUpload();
                     };
 
+                    this.getView().setBusy(false);
                 }
 
             },
@@ -338,11 +339,41 @@ sap.ui.define([
                     console.log(oError);
                 }
 
+                this.getView().setBusy(false);
                 var oHash = History.getInstance().getPreviousHash();
                 if (oHash !== undefined) {
                     window.history.go(-1);
                 } else {
                     this.getOwnerComponent().getRouter().navTo("RouteDetailPage", {}, true);
+                }
+
+                this.getView().setBusy(false);
+
+            },
+
+            resetUpload: function() {
+
+                var oView = this.getView();
+
+                oView.byId("idContrato").setValue("");
+                oView.byId("dataInicio").setValue("");
+                oView.byId("dataFim").setValue("");
+                oView.byId("supplierInput").setValue("");
+
+                try {
+                    var UploadCanc = oView.byId("UploadCollection");
+
+                    for (var i = 0; i < UploadCanc._aFileUploadersForPendingUpload.length; i++) {
+
+                        UploadCanc._aFileUploadersForPendingUpload[i].destroy();
+                        UploadCanc._aFileUploadersForPendingUpload.splice([i], 1);
+
+                    }
+
+                    UploadCanc.destroyHeaderParameters();
+                    UploadCanc.destroyItems();
+                } catch (oError) {
+                    console.log(oError);
                 }
 
             }

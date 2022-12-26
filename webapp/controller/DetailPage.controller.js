@@ -11,6 +11,8 @@ sap.ui.define([
     function(Controller, MessageToast, MessageBox, JSONModel, formatter) {
         "use strict";
 
+        const rRegex = /\W/;
+
         return Controller.extend("zfiorictr1.controller.DetailPage", {
 
             formatter: formatter,
@@ -65,6 +67,9 @@ sap.ui.define([
                 if (!ContratoFactoring) {
                     MessageToast.show("No Contract Selected");
                     return;
+                } else {
+                    var facNoSpace = ContratoFactoring.replaceAll(' ', '%20'); //remove spaces
+                    ContratoFactoring = facNoSpace;
                 }
 
                 if (ContratoFactoring) {
