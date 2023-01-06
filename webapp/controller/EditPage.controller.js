@@ -130,27 +130,57 @@ sap.ui.define([
                 messageFile = "O nome do arquivo não pode ser o mesmo ou já existir para este contrato!";
             }
 
-            aFile.forEach(element => {
-                if (aFileName.some((name) => element.name === name)) {
+            try {
 
-                    MessageBox.error(messageFile);
+                aFile.forEach(element => {
+                    if (aFileName.some((name) => element.name === name)) {
 
-                    //oUpData = oUploadCollection.getModel().getData(sPath);
-                    oUpData = oUploadCollection.getModel().getData();
-                    oUpItem = deepExtend({}, oUpData).items;
+                        MessageBox.error(messageFile);
 
-                    jQuery.each(oUpItem, function(index) {
-                        if (oUpItem[index] && oUpItem[index].fileName === element.name) {
-                            oUpItem.splice(index, 1);
-                        }
-                    });
+                        //oUpData = oUploadCollection.getModel().getData(sPath);
+                        oUpData = oUploadCollection.getModel().getData();
+                        oUpItem = deepExtend({}, oUpData).items;
 
-                    oUploadCollection.getModel().setData({
-                        "items": oUpItem
-                    });
+                        jQuery.each(oUpItem, function(index) {
+                            if (oUpItem[index] && oUpItem[index].fileName === element.name) {
+                                oUpItem.splice(index, 1);
+                            }
+                        });
 
+                        oUploadCollection.getModel().setData({
+                            "items": oUpItem
+                        });
+
+                    }
+                });
+
+            } catch (error) {
+
+                //If the catch occurs the user used the '+' button instead drop a file. 
+                for (let i = 0; i < aFile.length; i++) {
+                    //console.log(aFile.item(i).name);
+                    if (aFileName.some((name) => aFile.item(i).name === name)) {
+
+                        MessageBox.error(messageFile);
+
+                        //oUpData = oUploadCollection.getModel().getData(sPath);
+                        oUpData = oUploadCollection.getModel().getData();
+                        oUpItem = deepExtend({}, oUpData).items;
+
+                        jQuery.each(oUpItem, function(index) {
+                            if (oUpItem[index] && oUpItem[index].fileName === element.name) {
+                                oUpItem.splice(index, 1);
+                            }
+                        });
+
+                        oUploadCollection.getModel().setData({
+                            "items": oUpItem
+                        });
+
+                    }
                 }
-            });
+
+            }
 
         },
 
@@ -200,7 +230,7 @@ sap.ui.define([
             var supplier = this.getView().byId("supplierInput").getValue();
             var suppName = this.getView().byId("supText").getText();
 
-            var oViewBundle = oView.getModel("i18n").getResourceBundle();
+            var oViewBundle = this.getView().getModel("i18n").getResourceBundle();
 
             contratoNotFound = oViewBundle.getText("contratoNotFound");
             initialDateNotFound = oViewBundle.getText("initialDateNotFound");
@@ -281,6 +311,9 @@ sap.ui.define([
             var document = oEvent.getSource().getProperty("documentId");
             var fileName = oEvent.getSource().getProperty("fileName");
 
+            var documentNoSpace = document.replaceAll(' ', '%20');
+            var fileNameNoSpace = fileName.replaceAll(' ', '%20');
+
             oView.setBusy(true);
 
             var that = this;
@@ -290,7 +323,7 @@ sap.ui.define([
 
                     if (sAction == 'OK') {
                         //ContratoFactoring='File3',Filename='teste.pdf'
-                        that.getOwnerComponent().getModel().remove("/EditAnexoSet(ContratoFactoring='" + document + "',Filename='" + fileName + "')", {
+                        that.getOwnerComponent().getModel().remove("/EditAnexoSet(ContratoFactoring='" + documentNoSpace + "',Filename='" + fileNameNoSpace + "')", {
                             method: 'DELETE',
                             success: function(oEnv, oResp) {
                                 if (oEnv !== "" || oEnv !== undefined) {

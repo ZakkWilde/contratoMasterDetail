@@ -57,8 +57,7 @@
                 uploadEnabled="true"
                 fileDeleted=".onFileDeleted"
                 items="{ path: 'ContratoToEditAnexos', templateShareable: false }"
-                uploadUrl="/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/AnexoSet"
-                >
+                uploadUrl="/sap/opu/odata/sap/ZFIORI_CONTRATO_FOR_DIV_SRV/AnexoSet">
                 <items>
                     <UploadCollectionItem 
                         id="upCollection" 
@@ -70,7 +69,13 @@
                         enableDelete="true" 
                         visibleDelete="true"
                         deletePress=".onFileDeleted"
-                    />
+                        url="{ parts: ['ContratoFactoring','FileName'], formatter: '.formatter.formatUrl' }">
+                                    <attributes>
+                                        <ObjectAttribute title="{i18n>cpr} {CreatByName} 
+                                                                {i18n>e} { path: 'Creaton', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd-MM-yyyy'}} 
+                                                                {i18n>h} { path: 'Creatime', formatter: '.formatter.formatTime' }"></ObjectAttribute>
+                                    </attributes>
+                    </UploadCollectionItem>
                 </items>
             </UploadCollection>
         </content>

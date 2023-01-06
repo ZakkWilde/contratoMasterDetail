@@ -1,4 +1,4 @@
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/model/odata/type/Time"], function(Time) {
     "use strict";
 
     return {
@@ -16,9 +16,25 @@ sap.ui.define([], function() {
 
             return parseFloat(sValue).toFixed(2);
         },
-        /* date: function(date) {
-			return new DateFormatter({source: {pattern: "yyyy/MM/dd"}}).format(date);
-		} */
+
+        formatUrl: function(sCtr, sFName) {
+            //Example: Anexos(ContratoFactoring='File3',Filename='teste2.pdf')/$value
+            let sUrl = this.getView().getModel().sServiceUrl;
+            sUrl += "/" + "EditAnexoSet(ContratoFactoring='" + sCtr + "',Filename='" + sFName + "')" + "/$value";
+            return sUrl;
+        },
+
+        formatTime: function(oTime) {
+
+            var sTime = new Time(oTime).formatValue({
+                __edmType: "Edm.Time",
+                ms: 86398000
+            }, "string");
+
+            return sTime;
+
+        },
+
         addSpace: function(sValue) {
             if (sValue) {
                 var sSpace = sValue.replaceAll('_', ' ');
