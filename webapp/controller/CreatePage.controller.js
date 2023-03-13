@@ -170,6 +170,13 @@ sap.ui.define([
                 supNotFound = oViewBundle.getText("supNotFound");
                 noSpecialChar = oViewBundle.getText("noSpecialChar");
 
+                missingContract = oView.getText("missingContract");
+
+                if (cFiles) {
+                    MessageToast.show(missingContract);
+                    return;
+                }
+
                 if (!ctrFac) {
                     MessageBox.alert(contratoNotFound);
                     oView.setBusy(false);

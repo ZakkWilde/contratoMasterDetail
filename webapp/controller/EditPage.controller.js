@@ -238,6 +238,12 @@ sap.ui.define([
             finalDateCheck = oViewBundle.getText("finalDateCheck");
             divSupNotFound = oViewBundle.getText("divSupNotFound");
             supNotFound = oViewBundle.getText("supNotFound");
+            missingContract = oView.getText("missingContract");
+
+            if (cFiles) {
+                MessageToast.show(missingContract);
+                return;
+            }
 
             if (!ctrFac) {
                 MessageToast.show(contratoNotFound);
@@ -251,7 +257,7 @@ sap.ui.define([
             if (!dataIni) {
                 MessageToast.show(initialDateNotFound);
                 return;
-            }
+            } else { dataIni.setHours('10'); } //Adjust bug to save the previous day
 
             if (!dataFim) {
                 MessageToast.show(finalDateNotFound);
@@ -259,7 +265,7 @@ sap.ui.define([
             } else {
                 if (dataFim <= dataIni) {
                     MessageToast.show(finalDateCheck);
-                }
+                } else { dataFim.setHours('10'); } //Ajust bug to save the previous day 
             }
 
             if (!supplier) {
@@ -282,6 +288,10 @@ sap.ui.define([
                 "NomeForneD": suppName
             }
 
+            //get view to change after edition when there isn't attached file. 
+            var oView = this.getView();
+
+            //Save the edited contract 
             this.getOwnerComponent().getModel().create("/ContratoSet", formData, {
                 success: function(oEnv) {
                     if (oEnv !== "" || oEnv !== undefined) {
@@ -289,7 +299,7 @@ sap.ui.define([
                             oUploadCollection.upload();
                         } else {
                             MessageBox.success("Created successfully.");
-                            this.getView().setBusy(false);
+                            oView.setBusy(false);
                         }
                     }
 
@@ -299,6 +309,7 @@ sap.ui.define([
                     console.log(cc);
                     console.log(vv);
                     MessageBox.error("New entry not created.");
+                    oView.setBusy(false);
 
                 }
             });
