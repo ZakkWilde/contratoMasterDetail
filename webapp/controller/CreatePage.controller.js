@@ -15,10 +15,11 @@ sap.ui.define([
     function(Controller, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageToast, MessageBox) {
         "use strict";
 
-        var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar;
+        var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar, missingContract;
         var cont, qtdFile;
         var msgRet = [];
-        const rRegex = /\W/;
+        //const rRegex = /\W/;
+        const rRegex = /[ \t]/;
 
         return Controller.extend("zfiorictr1.controller.CreatePage", {
 
@@ -170,7 +171,7 @@ sap.ui.define([
                 supNotFound = oViewBundle.getText("supNotFound");
                 noSpecialChar = oViewBundle.getText("noSpecialChar");
 
-                missingContract = oView.getText("missingContract");
+                missingContract = oViewBundle.getText("missingContract");
 
                 if (cFiles) {
                     MessageToast.show(missingContract);

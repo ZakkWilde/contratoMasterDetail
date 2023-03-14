@@ -89,6 +89,9 @@ sap.ui.define([
                                     },
                                     error: function(cc, vv) {
 
+                                        console.log(cc);
+                                        MessageBox.error(JSON.parse(cc.responseText).error.message.value);
+
                                     }
                                 });
                             }

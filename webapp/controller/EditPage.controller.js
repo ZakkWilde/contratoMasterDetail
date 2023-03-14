@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageBox, deepExtend) {
     'use strict';
 
-    var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar;
+    var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar, missingContract;
     var cont, qtdFile;
     var msgRet = [];
     const rRegex = /\W/;
@@ -238,7 +238,7 @@ sap.ui.define([
             finalDateCheck = oViewBundle.getText("finalDateCheck");
             divSupNotFound = oViewBundle.getText("divSupNotFound");
             supNotFound = oViewBundle.getText("supNotFound");
-            missingContract = oView.getText("missingContract");
+            missingContract = oViewBundle.getText("missingContract");
 
             if (cFiles) {
                 MessageToast.show(missingContract);
