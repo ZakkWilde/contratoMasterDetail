@@ -175,6 +175,7 @@ sap.ui.define([
 
                 if (!cFiles) {
                     MessageToast.show(missingContract);
+                    oView.setBusy(false);
                     return;
                 }
 

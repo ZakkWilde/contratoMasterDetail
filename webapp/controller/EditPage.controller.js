@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(Controller, MessageToast, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageBox, deepExtend) {
     'use strict';
 
-    var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar, missingContract;
+    var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar, missingContract, deleteFile;
     var cont, qtdFile;
     var msgRet = [];
     const rRegex = /\W/;
@@ -242,11 +242,13 @@ sap.ui.define([
 
             if (!cFiles) {
                 MessageToast.show(missingContract);
+                this.getView().setBusy(false);
                 return;
             }
 
             if (!ctrFac) {
                 MessageToast.show(contratoNotFound);
+                this.getView().setBusy(false);
                 return;
             } else {
                 var facNoSpace = ctrFac.replaceAll(/\s/g, '%20'); //remove spaces
@@ -256,11 +258,13 @@ sap.ui.define([
             const dataAtual = new Date();
             if (!dataIni) {
                 MessageToast.show(initialDateNotFound);
+                this.getView().setBusy(false);
                 return;
             } else { dataIni.setHours('10'); } //Adjust bug to save the previous day
 
             if (!dataFim) {
                 MessageToast.show(finalDateNotFound);
+                this.getView().setBusy(false);
                 return;
             } else {
                 if (dataFim <= dataIni) {
@@ -270,11 +274,13 @@ sap.ui.define([
 
             if (!supplier) {
                 MessageToast.show(divSupNotFound);
+                this.getView().setBusy(false);
                 return;
             }
 
             if (!fornec) {
                 MessageToast.show(supNotFound);
+                this.getView().setBusy(false);
                 return;
             }
 
@@ -296,9 +302,17 @@ sap.ui.define([
                 success: function(oEnv) {
                     if (oEnv !== "" || oEnv !== undefined) {
                         if (cFiles > 0) {
-                            oUploadCollection.upload();
+                            if (oUploadCollection._aFileUploadersForPendingUpload.length > 0) {
+                                oUploadCollection.upload();
+                            } else if (oUploadCollection._aFilesFromDragAndDropForPendingUpload.length > 0) {
+                                oUploadCollection.upload();
+                            } else {
+                                MessageBox.success("Edited successfully.");
+                                oView.setBusy(false);
+                            }
+
                         } else {
-                            MessageBox.success("Created successfully.");
+                            MessageBox.success("Edited successfully.");
                             oView.setBusy(false);
                         }
                     }
@@ -308,7 +322,7 @@ sap.ui.define([
 
                     console.log(cc);
                     console.log(vv);
-                    MessageBox.error("New entry not created.");
+                    MessageBox.error("Entry not edited.");
                     oView.setBusy(false);
 
                 }
@@ -329,7 +343,11 @@ sap.ui.define([
 
             var that = this;
 
-            MessageBox.confirm("Deseja deletar o arquivo? ", {
+            //Delete message 
+            var oViewBundle = this.getView().getModel("i18n").getResourceBundle();
+            deleteFile = oViewBundle.getText("deleteFile");
+
+            MessageBox.confirm(deleteFile, {
                 onClose: function(sAction) {
 
                     if (sAction == 'OK') {
