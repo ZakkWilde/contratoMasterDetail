@@ -173,7 +173,7 @@ sap.ui.define([
 
                 missingContract = oViewBundle.getText("missingContract");
 
-                if (cFiles) {
+                if (!cFiles) {
                     MessageToast.show(missingContract);
                     return;
                 }

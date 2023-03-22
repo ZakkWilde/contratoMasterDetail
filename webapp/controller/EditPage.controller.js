@@ -240,7 +240,7 @@ sap.ui.define([
             supNotFound = oViewBundle.getText("supNotFound");
             missingContract = oViewBundle.getText("missingContract");
 
-            if (cFiles) {
+            if (!cFiles) {
                 MessageToast.show(missingContract);
                 return;
             }
