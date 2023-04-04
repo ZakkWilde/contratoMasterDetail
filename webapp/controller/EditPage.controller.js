@@ -251,8 +251,9 @@ sap.ui.define([
                 this.getView().setBusy(false);
                 return;
             } else {
-                var facNoSpace = ctrFac.replaceAll(/\s/g, '%20'); //remove spaces
-                ctrFac = facNoSpace;
+                //var facNoSpace = ctrFac.replaceAll(/\s/g, '%20'); //remove spaces
+                // var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
+                // ctrFac = facNoSpace;
             }
 
             const dataAtual = new Date();
