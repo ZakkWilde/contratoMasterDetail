@@ -28,7 +28,7 @@ sap.ui.define(["sap/ui/model/odata/type/Time"], function(Time) {
 
             var sTime = new Time(oTime).formatValue({
                 __edmType: "Edm.Time",
-                ms: 86398000
+                ms: oTime.ms
             }, "string");
 
             return sTime;
