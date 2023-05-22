@@ -15,8 +15,11 @@ sap.ui.define([
     function(Controller, History, Fragment, Filter, FilterOperator, UploadCollectionParameter, formatter, MessageToast, MessageBox) {
         "use strict";
 
+        var createOK, createNOK, recordNOK;
+
         var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar, missingContract;
         var cont, qtdFile;
+        var contName = 0; 
         var msgRet = [];
         //const rRegex = /\W/;
         const rRegex = /[ \t]/;
@@ -114,6 +117,17 @@ sap.ui.define([
 
                 oEvent.getSource().removeAllHeaderParameters();
                 // Header Slug
+
+                contName = contName + 1; 
+
+                oEvent.getSource().removeAllHeaderParameters();
+                // Header Slug
+                var oKey = new UploadCollectionParameter({
+                    name: "slug",
+                    value: contName
+                });
+                oEvent.getParameters().addHeaderParameter(oKey);
+
                 var oCustomerHeaderSlug = new UploadCollectionParameter({
                     name: "slug",
                     value: encodeURIComponent(oEvent.getParameter("fileName"))
@@ -153,7 +167,12 @@ sap.ui.define([
                 qtdFile = cFiles;
                 cont = 0;
 
+                //Create a randon id to send to SAP. 
+                var contractId = Math.floor(Math.random() * 1000000).toString().padStart(18, '0');
+                this.getView().byId("idContrato").setValue(contractId);
+
                 var ctrFac = oView.byId("idContrato").getValue();
+                var descCtr = oView.byId("descContrato").getValue(); //new
                 var fornec = oView.byId("HeaderCreate").getNumber();
                 var forName = oView.byId("HeaderCreate").getIntro();
                 var dataIni = oView.byId("dataInicio").getDateValue();
@@ -172,9 +191,18 @@ sap.ui.define([
                 noSpecialChar = oViewBundle.getText("noSpecialChar");
 
                 missingContract = oViewBundle.getText("missingContract");
+                createOK = oViewBundle.getText('createOK');
+                createNOK = oViewBundle.getText('createNOK');
 
                 if (!cFiles) {
                     MessageToast.show(missingContract);
+                    oView.setBusy(false);
+                    return;
+                }
+
+                //new
+                if (!descCtr) {
+                    MessageBox.alert(contratoNotFound);
                     oView.setBusy(false);
                     return;
                 }
@@ -226,6 +254,7 @@ sap.ui.define([
 
                 var formData = {
                     "ContratoFactoring": ctrFac,
+                    "Description": descCtr,
                     "Fornecedor": fornec,
                     "NomeForne": forName,
                     "DataInicio": dataIni,
@@ -242,7 +271,7 @@ sap.ui.define([
                             if (cFiles > 0) {
                                 oUploadCollection.upload();
                             } else {
-                                MessageBox.success("Created successfully.");
+                                MessageBox.success(createOK);
                                 that.getView().setBusy(false);
                                 that.onCanc();
                             }
@@ -253,9 +282,16 @@ sap.ui.define([
 
                         console.log(cc);
                         console.log(vv);
-                        MessageBox.error("New entry not created.");
-                        that.getView().setBusy(false);
 
+                        this.getView().setBusy(false);
+            
+                        MessageBox.error(createNOK, {
+                            actions: [MessageBox.Action.OK],
+                            emphasizedAction: MessageBox.Action.OK,
+                            onClose: function (sAction) {
+                                that.onNavBack();
+                            }
+                        });
                     }
                 });
             },
@@ -263,7 +299,13 @@ sap.ui.define([
             onUploadComplete: function(oEvent) {
                 this.getView().getModel().refresh();
 
+                var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+
+                createOK = resourceBundle.getText('createOK');
+                recordNOK = resourceBundle.getText('recordNOK');
+
                 this.getView().byId("idContrato").setValue("");
+                this.getView().byId("descContrato").setValue(""); //new
                 this.getView().byId("dataInicio").setValue("");
                 this.getView().byId("dataFim").setValue("");
                 this.getView().byId("supplierInput").setValue("");
@@ -292,11 +334,27 @@ sap.ui.define([
                 if (cont === qtdFile) {
 
                     if (msgRet.some((element) => element >= 200 && element <= 300)) {
-                        MessageToast.show("Create Successfuly");
-                        that.resetUpload();
+
+                        MessageBox.confirm(createOK, {
+                            actions: [MessageBox.Action.OK],
+                            emphasizedAction: MessageBox.Action.OK,
+                            onClose: function (sAction) {
+                                that.resetUpload();
+                                that.onNavBack();
+                            }
+                        });
+
                     } else {
-                        MessageBox.error("Record not created, contact support.");
-                        that.resetUpload();
+
+                        MessageBox.error(recordNOK, {
+                            actions: [MessageBox.Action.OK],
+                            emphasizedAction: MessageBox.Action.OK,
+                            onClose: function (sAction) {
+                                that.resetUpload();
+                                that.onNavBack();
+                            }
+                        });
+                        
                     };
                 }
 
@@ -318,6 +376,7 @@ sap.ui.define([
 
                 //clear screen parameters
                 this.getView().byId("idContrato").setValue("");
+                this.getView().byId("descContrato").setValue(""); //new
                 this.getView().byId("dataInicio").setValue("");
                 this.getView().byId("dataFim").setValue("");
                 this.getView().byId("supplierInput").setValue("");
@@ -352,6 +411,7 @@ sap.ui.define([
                 var oView = this.getView();
 
                 oView.byId("idContrato").setValue("");
+                oView.byId("descContrato").setValue(""); //new
                 oView.byId("dataInicio").setValue("");
                 oView.byId("dataFim").setValue("");
                 oView.byId("supplierInput").setValue("");

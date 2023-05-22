@@ -1,7 +1,14 @@
 <mvc:View xmlns:form="sap.ui.layout.form" controllerName="zfiorictr1.controller.CreatePage" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns="sap.m">
     <Page id="page" title="{i18n>CreatePage}" showHeader="true" showFooter="true" showNavButton="true" navButtonPress="onNavBack">
         <content>
-            <ObjectHeader id="HeaderCreate" intro="{Name1}" title="{i18n>Novo}" icon="sap-icon://business-card" number="{Lifnr}" numberState="None" titleActive="false" backgroundDesign="Translucent" condensed="false" visible="true" />
+            <ObjectHeader id="HeaderCreate" 
+                intro="{Name1}" 
+                title="{i18n>Novo}" 
+                icon="sap-icon://business-card" 
+                number="{Lifnr}" numberState="None" 
+                titleActive="false" 
+                backgroundDesign="Translucent"
+                condensed="false" visible="true" />
             <VBox class="sapUiSmallMargin">
                 <form:SimpleForm
                     id="form"
@@ -19,11 +26,12 @@
                     emptySpanS="0"
                     columnsXL="1"
                     columnsL="1"
-                    columnsM="1"
-                >
+                    columnsM="1">
                     <f:content>
-                        <Label text="{i18n>ctr}" />
-                        <Input id="idContrato" maxLength="18"/>
+                        <Input id="idContrato" maxLength="18" visible="false"/>
+                        
+                        <Label text="{i18n>Desc}" />
+                        <Input id="descContrato" maxLength="50"/>
                         <Text />
                         <Label text="{i18n>ini}" />
                         <DatePicker id="dataInicio" placeholder="{i18n>dataIni}" valueFormat="dd-MM-yyyy" />

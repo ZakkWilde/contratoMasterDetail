@@ -14,7 +14,9 @@ sap.ui.define([
     'use strict';
 
     var contratoNotFound, initialDateNotFound, finalDateNotFound, finalDateCheck, divSupNotFound, supNotFound, noSpecialChar, missingContract, deleteFile;
-    var cont, qtdFile;
+    var editOK, editNOK, fileLenght, fileSize, deleteOK, deleteNOK;
+
+    var cont = 0; var qtdFile;
     var msgRet = [];
     const rRegex = /\W/;
 
@@ -31,6 +33,7 @@ sap.ui.define([
 
             var oRouter = this.getOwnerComponent().getRouter();
             oRouter.getRoute("RouteEditPage").attachMatched(this._onRouteMatched, this);
+            
         },
         _onRouteMatched: function(oEvent) {
             var oArgs, oView;
@@ -84,9 +87,6 @@ sap.ui.define([
 
         onValueHelpSearch: function(oEvent) {
             var sValue = oEvent.getParameter("value");
-            //var oFilter = new Filter("Name1", FilterOperator.Contains, sValue);
-
-            //oEvent.getSource().getBinding("items").filter([oFilter]);
 
             var sValueUpper = sValue.toUpperCase();
             oEvent.getSource().getBinding("items").filter(new Filter([
@@ -186,10 +186,25 @@ sap.ui.define([
 
         onBeforeUploadStarts: function(oEvent) {
 
-            var ContratoFactoring = this.getView().byId("HeaderEdit").getTitle();
+            //var ContratoFactoring = this.getView().byId("HeaderEdit").getTitle();
+            var ectrFac = this.getView().byId("HeaderAttribute");
+            var ContratoFactoring = "E" + ectrFac.getBindingInfo('text').binding.aValues[1];
+
+            const oUploadCollection = this.getView().byId("UploadCollection");
+            if(!cont){
+                cont = oUploadCollection.getItems().length + 1; 
+            } else {
+                cont = cont + 1;
+            }
 
             oEvent.getSource().removeAllHeaderParameters();
             // Header Slug
+            var oKey = new UploadCollectionParameter({
+                name: "slug",
+                value: cont
+            });
+            oEvent.getParameters().addHeaderParameter(oKey);
+
             var oCustomerHeaderSlug = new UploadCollectionParameter({
                 name: "slug",
                 value: encodeURIComponent(oEvent.getParameter("fileName"))
@@ -211,9 +226,9 @@ sap.ui.define([
             });
             oEvent.getParameters().addHeaderParameter(oToken);
 
-            setTimeout(function() {
+           // setTimeout(function() {
                 //MessageToast.show("Event beforeUploadStarts triggered");
-            }, 4000);
+           // }, 4000);
 
         },
 
@@ -222,7 +237,10 @@ sap.ui.define([
             var oUploadCollection = this.byId("UploadCollection");
             var cFiles = oUploadCollection.getItems().length;
 
-            var ctrFac = this.getView().byId("HeaderEdit").getTitle();
+            var ectrFac = this.getView().byId("HeaderAttribute");
+            var ctrFac = "E" + ectrFac.getBindingInfo('text').binding.aValues[1];
+
+            var ctrDesc = this.getView().byId("HeaderEdit").getTitle();
             var fornec = this.getView().byId("HeaderEdit").getNumber();
             var forName = this.getView().byId("HeaderEdit").getIntro();
             var dataIni = this.getView().byId("dataInicio").getDateValue();
@@ -250,10 +268,12 @@ sap.ui.define([
                 MessageToast.show(contratoNotFound);
                 this.getView().setBusy(false);
                 return;
-            } else {
-                //var facNoSpace = ctrFac.replaceAll(/\s/g, '%20'); //remove spaces
-                // var facNoSpace = ctrFac.replaceAll(/\s/g, '_'); //remove spaces
-                // ctrFac = facNoSpace;
+            }
+
+            if (!ctrDesc) {
+                MessageToast.show(contratoNotFound);
+                this.getView().setBusy(false);
+                return;
             }
 
             const dataAtual = new Date();
@@ -287,6 +307,7 @@ sap.ui.define([
 
             var formData = {
                 "ContratoFactoring": ctrFac,
+                "Description": ctrDesc,
                 "Fornecedor": fornec,
                 "NomeForne": forName,
                 "DataInicio": dataIni,
@@ -294,6 +315,13 @@ sap.ui.define([
                 "FornecedorDivergente": supplier,
                 "NomeForneD": suppName
             }
+
+            var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+             editOK = resourceBundle.getText('editOK');
+             editNOK = resourceBundle.getText('editNOK');
+
+            cont = 0;
+            var that = this; 
 
             //get view to change after edition when there isn't attached file. 
             var oView = this.getView();
@@ -305,16 +333,34 @@ sap.ui.define([
                         if (cFiles > 0) {
                             if (oUploadCollection._aFileUploadersForPendingUpload.length > 0) {
                                 oUploadCollection.upload();
+                                //oView.setBusy(false);
                             } else if (oUploadCollection._aFilesFromDragAndDropForPendingUpload.length > 0) {
                                 oUploadCollection.upload();
+                                //oView.setBusy(false);
                             } else {
-                                MessageBox.success("Edited successfully.");
-                                oView.setBusy(false);
+                                //MessageBox.success("Edited successfully.");
+                                //oView.setBusy(false);
+
+                                MessageBox.confirm(editOK, {
+                                    actions: [MessageBox.Action.OK],
+                                    emphasizedAction: MessageBox.Action.OK,
+                                    onClose: function (sAction) {
+                                        oView.setBusy(false);
+                                        that.onNavBack();
+                                    }
+                                });
                             }
 
                         } else {
-                            MessageBox.success("Edited successfully.");
-                            oView.setBusy(false);
+
+                            MessageBox.confirm(editOK, {
+                                actions: [MessageBox.Action.OK],
+                                emphasizedAction: MessageBox.Action.OK,
+                                onClose: function (sAction) {
+                                    oView.setBusy(false);
+                                    that.onNavBack();
+                                }
+                            });
                         }
                     }
 
@@ -323,8 +369,14 @@ sap.ui.define([
 
                     console.log(cc);
                     console.log(vv);
-                    MessageBox.error("Entry not edited.");
-                    oView.setBusy(false);
+                    MessageBox.error(editNOK, {
+                        actions: [MessageBox.Action.OK],
+                        emphasizedAction: MessageBox.Action.OK,
+                        onClose: function (sAction) {
+                            oView.setBusy(false);
+                            that.onNavBack();
+                        }
+                    });                    
 
                 }
             });
@@ -337,6 +389,11 @@ sap.ui.define([
             var document = oEvent.getSource().getProperty("documentId");
             var fileName = oEvent.getSource().getProperty("fileName");
 
+            var fileName2 = oEvent.getSource().getBinding('url').getCurrentValues()[1];
+            console.log(fileName2);
+
+            fileName = fileName2;
+
             var documentNoSpace = document.replaceAll(' ', '%20');
             var fileNameNoSpace = fileName.replaceAll(' ', '%20');
 
@@ -346,7 +403,9 @@ sap.ui.define([
 
             //Delete message 
             var oViewBundle = this.getView().getModel("i18n").getResourceBundle();
-            deleteFile = oViewBundle.getText("deleteFile");
+            deleteFile = oViewBundle.getText("deleteFile");            
+            deleteOK = oViewBundle.getText('deleteOK');
+            deleteNOK = oViewBundle.getText('deleteNOK');
 
             MessageBox.confirm(deleteFile, {
                 onClose: function(sAction) {
@@ -357,9 +416,9 @@ sap.ui.define([
                             method: 'DELETE',
                             success: function(oEnv, oResp) {
                                 if (oEnv !== "" || oEnv !== undefined) {
-                                    MessageBox.success("Deleted successfully.");
+                                    MessageBox.success(deleteOK);
                                 } else {
-                                    MessageBox.error("Not able to delete. Contract already used");
+                                    MessageBox.error(deleteNOK);
                                     MessageBox.error(oResp);
                                 }
                                 that.getView().setBusy(false);
@@ -377,14 +436,22 @@ sap.ui.define([
         },
 
         onFilenameLengthExceed: function(oEvent) {
-            MessageToast.show("Comprimento do arquivo excedido");
+            var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+                fileLenght = resourceBundle.getText('fileLenght');
+
+            MessageToast.show(fileLenght); 
         },
 
         onFileSizeExceed: function(oEvent) {
-            MessageToast.show("Tamanho do arquivo excedido");
+            var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+            fileSize = resourceBundle.getText('fileSize');
+            MessageToast.show(fileSize);
         },
 
         onUploadComplete: function(oEvent) {
+
+            var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+             editOK = resourceBundle.getText('editOK');
 
             this.getView().getModel().refresh();
 
@@ -408,6 +475,14 @@ sap.ui.define([
                 }
             }
             this.getView().setBusy(false);
+            
+            MessageBox.confirm(editOK, {
+                actions: [MessageBox.Action.OK],
+                emphasizedAction: MessageBox.Action.OK,
+                onClose: function (sAction) {
+                    that.onNavBack();
+                }
+            });
         },
 
         onNavBack: function() {

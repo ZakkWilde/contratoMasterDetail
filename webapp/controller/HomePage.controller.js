@@ -17,7 +17,7 @@ sap.ui.define([
             onInit: function() {
 
                 var oRouter = this.getOwnerComponent().getRouter();
-                this._oRouterArgs = null;
+                this._oRouterArgs = null; 
 
                 oRouter.getRoute("RouteHomePage").attachMatched(this._onRouteMatched, this);
 

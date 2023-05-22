@@ -11,7 +11,9 @@ sap.ui.define([
     function(Controller, MessageToast, MessageBox, JSONModel, formatter) {
         "use strict";
 
-        const rRegex = /\W/;
+        var ctrNotSelected, deleteT, ctrBlanc, deleteOK, deleteNOK, supplierNOK;
+
+        const rRegex = /\W/; 
 
         return Controller.extend("zfiorictr1.controller.DetailPage", {
 
@@ -55,17 +57,24 @@ sap.ui.define([
 
             onDelete: function(oEvent) {
 
+                var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+
+                 ctrNotSelected = resourceBundle.getText('ctrNotSelected');
+                 deleteT = resourceBundle.getText('deleteT');
+                 deleteOK = resourceBundle.getText('deleteOK');
+                 deleteNOK = resourceBundle.getText('deleteNOK');
+
 
                 try {
                     var ContratoFactoring = this.getView().byId("DetailTable").getSelectedItem().getBindingContext().getProperty("ContratoFactoring");
                 } catch (error) {
                     console.log(error);
-                    MessageToast.show("Nenhum contrato selecionado");
+                    MessageToast.show(ctrNotSelected);
                 }
 
                 var that = this;
                 if (!ContratoFactoring) {
-                    MessageToast.show("No Contract Selected");
+                    MessageToast.show(ctrNotSelected);
                     return;
                 } else {
                     var facNoSpace = ContratoFactoring.replaceAll(' ', '%20'); //remove spaces
@@ -73,7 +82,7 @@ sap.ui.define([
                 }
 
                 if (ContratoFactoring) {
-                    MessageBox.confirm("Toda a informação, incluindo anexos irá ser eliminada. Deseja continuar?", {
+                    MessageBox.confirm(deleteT, {
                         onClose: function(sAction) {
                             if (sAction == 'OK') {
                                 //Start to remove from Backend
@@ -81,9 +90,9 @@ sap.ui.define([
                                     method: "DELETE",
                                     success: function(oEnv, Response) {
                                         if (oEnv !== "" || oEnv !== undefined) {
-                                            MessageBox.success("Deleted successfully.");
+                                            MessageBox.success(deleteOK);
                                         } else {
-                                            MessageBox.error("Not able to delete. Contract already used");
+                                            MessageBox.error(deleteNOK);
                                             MessageBox.error(Response);
                                         }
                                     },
@@ -102,6 +111,9 @@ sap.ui.define([
 
             onItemPress: function(oEvent) {
 
+                var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+                    ctrBlanc = resourceBundle.getText('ctrBlanc');
+
                 var sContrato = oEvent.getSource().getBindingContext().getProperty("ContratoFactoring");
                 if (sContrato) {
                     //Remove Space not treated
@@ -111,13 +123,16 @@ sap.ui.define([
                         objectId: sContrato
                     });
                 } else {
-                    MessageToast.show("Contrato em branco");
+                    MessageToast.show(ctrBlanc);
                     return;
                 }
 
             },
 
             onCreate: function(oEvent) {
+
+                var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
+                supplierNOK = resourceBundle.getText('supplierNOK');
 
                 var oItem, oCtx;
                 oItem = oEvent.getSource();
@@ -128,7 +143,7 @@ sap.ui.define([
                         objectId: oCtx.getProperty("Lifnr")
                     });
                 } else {
-                    MessageToast.show("Um fornecedor deve ser selecionado");
+                    MessageToast.show(supplierNOK);
                     return;
                 }
             }

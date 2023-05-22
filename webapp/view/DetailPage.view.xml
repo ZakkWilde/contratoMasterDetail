@@ -4,11 +4,16 @@
             <ObjectHeader id="HeaderDetail" title="{Name1}" icon="sap-icon://business-card" number="{Lifnr}" numberState="None" titleActive="false" backgroundDesign="Translucent" condensed="false" visible="true">
                 <ObjectAttribute id="HeaderAttribute" text="NIF: {Stceg}" />
             </ObjectHeader>
-            <Table id="DetailTable" headerText="{i18n>ctrs}" items="{ContratoSet}"  noDataText="No Data" mode="SingleSelectLeft" growing="true" growingScrollToLoad="true">
+            <Table id="DetailTable" headerText="{i18n>ctrs}" items="{ContratoSet}"  noDataText="{i18n>NoData}" mode="SingleSelectLeft" growing="true" growingScrollToLoad="true">
                 <columns>
                     <Column id="contrato">
                         <header>
                             <Text text="{i18n>Ctr}" />
+                        </header>
+                    </Column>
+                    <Column id="descricao">
+                        <header>
+                            <Text text="{i18n>Desc}" />
                         </header>
                     </Column>
                     <Column id="fnicio">
@@ -31,6 +36,7 @@
                     <ColumnListItem id="detailItens" vAlign="Middle" type="Navigation" press="onItemPress">
                         <cells>
                             <ObjectIdentifier id="item_contrato" title="{ path: 'ContratoFactoring', formatter: '.formatter.addSpace'}" />
+                            <ObjectIdentifier id="item_desc" title="{Description}" />
                             <ObjectIdentifier id="item_datai" title="{ path: 'DataInicio', type: 'sap.ui.model.type.Date', formatOptions: { style: 'medium' }}" />
                             <ObjectIdentifier id="item_dataf" title="{ path: 'DataFim', type: 'sap.ui.model.type.Date', formatOptions: { style: 'medium' }}" />
                             <ObjectIdentifier id="item_for_div" title="{NomeForneD}" text="{FornecedorDivergente}" />
@@ -43,7 +49,7 @@
 			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button id="create" icon="sap-icon://create" text="{i18n>crea}" type="Accept" press="onCreate" />
-				<Button id="delete" icon="sap-icon://delete" text="{i18n>dele}" type="Reject" press="onDelete" />
+				<Button id="delete" icon="sap-icon://delete" text="{i18n>rem}" type="Reject" press="onDelete" />
 			</OverflowToolbar>
         </footer>
     </Page>

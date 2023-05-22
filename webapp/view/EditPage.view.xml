@@ -8,7 +8,18 @@
     xmlns="sap.m">
     <Page id="editPage" title="{i18n>EditPage}" showHeader="true" showFooter="true" showNavButton="true" navButtonPress="onNavBack">
         <content>
-            <ObjectHeader id="HeaderEdit"  intro="{NomeForne}" title="{ path:'ContratoFactoring', formatter: '.formatter.addSpace'}" icon="sap-icon://business-card" number="{Fornecedor}" numberState="None" titleActive="false" backgroundDesign="Translucent" condensed="false" visible="true" />
+            <ObjectHeader id="HeaderEdit"  
+                intro="{NomeForne}" 
+                title="{Description}"
+                icon="sap-icon://business-card" 
+                number="{Fornecedor}" 
+                numberState="None" 
+                titleActive="false" 
+                backgroundDesign="Translucent" 
+                condensed="false" 
+                visible="true">
+                    <ObjectAttribute id="HeaderAttribute" text="{i18n>Contrato} {ContratoFactoring}: {Description}"/>
+            </ObjectHeader>
             <VBox class="sapUiSmallMargin">
                 <form:SimpleForm
                     id="formEdit"
@@ -26,8 +37,7 @@
                     emptySpanS="0"
                     columnsXL="1"
                     columnsL="1"
-                    columnsM="1"
-                >
+                    columnsM="1">
                     <f:content>
                         <Label text="{i18n>ini}" />
                         <DatePicker id="dataInicio" placeholder="{i18n>dataIni}" valueFormat="dd-MM-yyyy" dateValue="{DataInicio}" />
@@ -69,11 +79,13 @@
                         enableDelete="true" 
                         visibleDelete="true"
                         deletePress=".onFileDeleted"
-                        url="{ parts: ['ContratoFactoring','FileName'], formatter: '.formatter.formatUrl' }">
+                        url="{ parts: ['ContratoFactoring','Filename'], formatter: '.formatter.formatUrl' }">
                                     <attributes>
                                         <ObjectAttribute id='objAttrib' title="{i18n>cpr} {CreatByName} 
                                                                         {i18n>e} { path: 'Creaton', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd-MM-yyyy'}} 
-                                                                        {i18n>h} { path: 'Creatime', formatter: '.formatter.formatTime' }"></ObjectAttribute>
+                                                                        {i18n>h} { path: 'Creatime', formatter: '.formatter.formatTime' }">
+                                        </ObjectAttribute>
+                                        <ObjectAttribute id='objItem' text='{Filename}' visible="false"></ObjectAttribute>
                                     </attributes>
                     </UploadCollectionItem>
                 </items>
