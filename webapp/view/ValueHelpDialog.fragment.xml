@@ -8,7 +8,7 @@
 		cancel=".onValueHelpClose">
 		<StandardListItem
 			icon="sap-icon://supplier"
-			iconDensityAware="false"
+			iconDensityAware="false" 
 			iconInset="false"
 			title="{Name1}"
 			description="{Lifnr}" />

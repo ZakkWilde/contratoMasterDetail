@@ -439,7 +439,7 @@ sap.ui.define([
             var resourceBundle = this.getView().getModel('i18n').getResourceBundle();
                 fileLenght = resourceBundle.getText('fileLenght');
 
-            MessageToast.show(fileLenght); 
+            MessageToast.show(fileLenght);
         },
 
         onFileSizeExceed: function(oEvent) {

@@ -6,7 +6,7 @@
                     updateFinished="onUpdateFinished"
                     selectionChange="onSelectionChange" 
                     growing="true" 
-                    growingScrollToLoad="true"
+                    growingScrollToLoad="true" 
                     growingThreshold="20" 
                     includeItemInSelection="true">
                 <headerToolbar>
