@@ -283,7 +283,7 @@ sap.ui.define([
                         console.log(cc);
                         console.log(vv);
 
-                        this.getView().setBusy(false);
+                        that.getView().setBusy(false);
             
                         MessageBox.error(createNOK, {
                             actions: [MessageBox.Action.OK],
